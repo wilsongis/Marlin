@@ -523,16 +523,11 @@
   #error "ANYCUBIC_TFT_MODEL is now ANYCUBIC_LCD_I3MEGA. Please update your Configuration.h."
 #elif defined(EVENT_GCODE_SD_STOP)
   #error "EVENT_GCODE_SD_STOP is now EVENT_GCODE_SD_ABORT. Please update your Configuration.h."
-#endif
-
-#ifdef FIL_RUNOUT_INVERTING
+#elif defined(FIL_RUNOUT_INVERTING)
   #if FIL_RUNOUT_INVERTING
-    #warning "FIL_RUNOUT_INVERTING true is now FIL_RUNOUT_STATE HIGH. Please update Configuration.h."
+    #error "FIL_RUNOUT_INVERTING true is now FIL_RUNOUT_STATE HIGH. Please update your Configuration.h."
   #else
-    #warning "FIL_RUNOUT_INVERTING false is now FIL_RUNOUT_STATE LOW. Please update Configuration.h."
-  #endif
-  #ifndef FIL_RUNOUT_STATE
-    #define FIL_RUNOUT_STATE ((FIL_RUNOUT_INVERTING) ? HIGH : LOW)
+    #error "FIL_RUNOUT_INVERTING false is now FIL_RUNOUT_STATE LOW. Please update your Configuration.h."
   #endif
 #endif
 
@@ -2125,7 +2120,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #if !(PIN_EXISTS(NEOPIXEL) && NEOPIXEL_PIXELS > 0)
     #error "NEOPIXEL_LED requires NEOPIXEL_PIN and NEOPIXEL_PIXELS."
   #endif
+  #elif ENABLED(NEOPIXEL2_SEPARATE)
+   #if !(PIN_EXISTS(NEOPIXEL2) && NEOPIXEL2_PIXELS > 0)
+    #error "NEOPIXEL2 requires NEOPIXEL2_PIN and NEOPIXEL2_PIXELS."
+  #endif
 #endif
+
 #undef _RGB_TEST
 
 #if DISABLED(NO_COMPILE_TIME_PWM)
@@ -2877,7 +2877,7 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
 #endif
 
 /**
- * Prusa MMU2 requirements
+ * Průša MMU2 requirements
  */
 #if ENABLED(PRUSA_MMU2)
   #if EXTRUDERS != 5

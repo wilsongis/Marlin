@@ -149,11 +149,16 @@
     #define CORE_AXIS_2 C_AXIS
   #endif
   #define CORESIGN(n) (ANY(COREYX, COREZX, COREZY) ? (-(n)) : (n))
+#elif ENABLED(MARKFORGED_XY)
+  // Markforged kinematics
+  #define CORE_AXIS_1 A_AXIS
+  #define CORE_AXIS_2 B_AXIS
+  #define NORMAL_AXIS Z_AXIS
 #endif
 
 // Calibration codes only for non-core axes
 #if EITHER(BACKLASH_GCODE, CALIBRATION_GCODE)
-  #if IS_CORE
+  #if EITHER(IS_CORE, MARKFORGED_XY)
     #define X_AXIS_INDEX 0
     #define Y_AXIS_INDEX 1
     #define Z_AXIS_INDEX 2
@@ -403,7 +408,7 @@
 #ifndef PSU_NAME
   #if DISABLED(PSU_CONTROL)
     #define PSU_NAME "Generic"  // No control
-  #elif PSU_ACTIVE_HIGH
+  #elif PSU_ACTIVE_STATE
     #define PSU_NAME "XBox"     // X-Box 360 (203W)
   #else
     #define PSU_NAME "ATX"      // ATX style
@@ -1876,12 +1881,28 @@
   #undef AUTO_POWER_CHAMBER_FAN
 #endif
 
-// Other fans
+// Print Cooling fans (limit)
+#ifdef NUM_M106_FANS
+  #define MAX_FANS NUM_M106_FANS
+#else
+  #define MAX_FANS 8  // Max supported fans
+#endif
+
+#define _NOT_E_AUTO(N,F) (E##N##_AUTO_FAN_PIN != FAN##F##_PIN)
+#define _HAS_FAN(F) (PIN_EXISTS(FAN##F) \
+                     && CONTROLLER_FAN_PIN != FAN##F##_PIN \
+                     && _NOT_E_AUTO(0,F) \
+                     && _NOT_E_AUTO(1,F) \
+                     && _NOT_E_AUTO(2,F) \
+                     && _NOT_E_AUTO(3,F) \
+                     && _NOT_E_AUTO(4,F) \
+                     && _NOT_E_AUTO(5,F) \
+                     && _NOT_E_AUTO(6,F) \
+                     && _NOT_E_AUTO(7,F) \
+                     && F < MAX_FANS)
 #if PIN_EXISTS(FAN)
   #define HAS_FAN0 1
 #endif
-#define _NOT_E_AUTO(N,F) (E##N##_AUTO_FAN_PIN != FAN##F##_PIN)
-#define _HAS_FAN(F) (PIN_EXISTS(FAN##F) && CONTROLLER_FAN_PIN != FAN##F##_PIN && _NOT_E_AUTO(0,F) && _NOT_E_AUTO(1,F) && _NOT_E_AUTO(2,F) && _NOT_E_AUTO(3,F) && _NOT_E_AUTO(4,F) && _NOT_E_AUTO(5,F) && _NOT_E_AUTO(6,F) && _NOT_E_AUTO(7,F))
 #if _HAS_FAN(1)
   #define HAS_FAN1 1
 #endif

@@ -477,6 +477,18 @@
   #error "HOME_USING_SPREADCYCLE is now obsolete. Please remove it from Configuration_adv.h."
 #elif defined(DGUS_LCD)
   #error "DGUS_LCD is now DGUS_LCD_UI_(ORIGIN|FYSETC|HIPRECY). Please update your configuration."
+#elif defined(DGUS_SERIAL_PORT)
+  #error "DGUS_SERIAL_PORT is now LCD_SERIAL_PORT. Please update your configuration."
+#elif defined(DGUS_BAUDRATE)
+  #error "DGUS_BAUDRATE is now LCD_BAUDRATE. Please update your configuration."
+#elif defined(DGUS_STATS_RX_BUFFER_OVERRUNS)
+  #error "DGUS_STATS_RX_BUFFER_OVERRUNS is now STATS_RX_BUFFER_OVERRUNS. Please update your configuration."
+#elif defined(DGUS_SERIAL_PORT)
+  #error "DGUS_SERIAL_PORT is now LCD_SERIAL_PORT. Please update your configuration."
+#elif defined(ANYCUBIC_LCD_SERIAL_PORT)
+  #error "ANYCUBIC_LCD_SERIAL_PORT is now LCD_SERIAL_PORT. Please update your configuration."
+#elif defined(INTERNAL_SERIAL_PORT)
+  #error "INTERNAL_SERIAL_PORT is now MMU2_SERIAL_PORT. Please update your configuration."
 #elif defined(X_DUAL_ENDSTOPS_ADJUSTMENT)
   #error "X_DUAL_ENDSTOPS_ADJUSTMENT is now X2_ENDSTOP_ADJUSTMENT. Please update Configuration_adv.h."
 #elif defined(Y_DUAL_ENDSTOPS_ADJUSTMENT)
@@ -582,12 +594,10 @@
   #error "SERIAL_XON_XOFF and SERIAL_STATS_* features not supported on USB-native AVR devices."
 #endif
 
-#if SERIAL_PORT > 7
-  #error "Set SERIAL_PORT to the port on your board. Usually this is 0."
-#endif
-
-#if defined(SERIAL_PORT_2) && NUM_SERIAL < 2
-  #error "SERIAL_PORT_2 is not supported for your MOTHERBOARD. Disable it to continue."
+#ifndef SERIAL_PORT
+  #error "SERIAL_PORT must be defined in Configuration.h"
+#elif defined(SERIAL_PORT_2) && SERIAL_PORT_2 == SERIAL_PORT
+  #error "SERIAL_PORT_2 cannot be the same as SERIAL_PORT. Please update your configuration."
 #endif
 
 /**
@@ -670,7 +680,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  * LCD Info Screen Style
  */
 #if LCD_INFO_SCREEN_STYLE > 0
-  #if HAS_GRAPHICAL_LCD || LCD_WIDTH < 20 || LCD_HEIGHT < 4
+  #if HAS_MARLINUI_U8GLIB || LCD_WIDTH < 20 || LCD_HEIGHT < 4
     #error "Alternative LCD_INFO_SCREEN_STYLE requires 20x4 Character LCD."
   #elif LCD_INFO_SCREEN_STYLE > 1
     #error "LCD_INFO_SCREEN_STYLE only has options 0 and 1 at this time."
@@ -683,17 +693,17 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 #if ENABLED(LCD_PROGRESS_BAR)
   #if NONE(SDSUPPORT, LCD_SET_PROGRESS_MANUALLY)
     #error "LCD_PROGRESS_BAR requires SDSUPPORT or LCD_SET_PROGRESS_MANUALLY."
-  #elif !HAS_CHARACTER_LCD
-    #error "LCD_PROGRESS_BAR requires a character LCD."
-  #elif HAS_GRAPHICAL_LCD
+  #elif NONE(HAS_MARLINUI_HD44780, IS_TFTGLCD_PANEL)
+    #error "LCD_PROGRESS_BAR only applies to HD44780 character LCD and TFTGLCD_PANEL_(SPI|I2C)."
+  #elif HAS_MARLINUI_U8GLIB
     #error "LCD_PROGRESS_BAR does not apply to graphical displays."
   #elif ENABLED(FILAMENT_LCD_DISPLAY)
     #error "LCD_PROGRESS_BAR and FILAMENT_LCD_DISPLAY are not fully compatible. Comment out this line to use both."
   #elif PROGRESS_MSG_EXPIRE < 0
     #error "PROGRESS_MSG_EXPIRE must be greater than or equal to 0."
   #endif
-#elif ENABLED(LCD_SET_PROGRESS_MANUALLY) && NONE(HAS_GRAPHICAL_LCD, HAS_GRAPHICAL_TFT, EXTENSIBLE_UI)
-  #error "LCD_SET_PROGRESS_MANUALLY requires LCD_PROGRESS_BAR, Graphical LCD, TFT, or EXTENSIBLE_UI."
+#elif ENABLED(LCD_SET_PROGRESS_MANUALLY) && NONE(HAS_MARLINUI_U8GLIB, HAS_GRAPHICAL_TFT, HAS_MARLINUI_HD44780, EXTENSIBLE_UI)
+  #error "LCD_SET_PROGRESS_MANUALLY requires LCD_PROGRESS_BAR, Character LCD, Graphical LCD, TFT, or EXTENSIBLE_UI."
 #endif
 
 #if !HAS_LCD_MENU && ENABLED(SD_REPRINT_LAST_SELECTED_FILE)
@@ -703,9 +713,9 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 /**
  * Custom Boot and Status screens
  */
-#if ENABLED(SHOW_CUSTOM_BOOTSCREEN) && NONE(HAS_GRAPHICAL_LCD, TOUCH_UI_FTDI_EVE)
+#if ENABLED(SHOW_CUSTOM_BOOTSCREEN) && NONE(HAS_MARLINUI_U8GLIB, TOUCH_UI_FTDI_EVE)
   #error "SHOW_CUSTOM_BOOTSCREEN requires Graphical LCD or TOUCH_UI_FTDI_EVE."
-#elif ENABLED(CUSTOM_STATUS_SCREEN_IMAGE) && !HAS_GRAPHICAL_LCD
+#elif ENABLED(CUSTOM_STATUS_SCREEN_IMAGE) && !HAS_MARLINUI_U8GLIB
   #error "CUSTOM_STATUS_SCREEN_IMAGE requires a Graphical LCD."
 #endif
 
@@ -772,7 +782,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
     #error "MESH_BED_LEVELING and BABYSTEP_ZPROBE_OFFSET is not a valid combination"
   #elif ENABLED(BABYSTEP_ZPROBE_OFFSET) && !HAS_BED_PROBE
     #error "BABYSTEP_ZPROBE_OFFSET requires a probe."
-  #elif ENABLED(BABYSTEP_ZPROBE_GFX_OVERLAY) && !HAS_GRAPHICAL_LCD
+  #elif ENABLED(BABYSTEP_ZPROBE_GFX_OVERLAY) && !HAS_MARLINUI_U8GLIB
     #error "BABYSTEP_ZPROBE_GFX_OVERLAY requires a Graphical LCD."
   #elif ENABLED(BABYSTEP_ZPROBE_GFX_OVERLAY) && DISABLED(BABYSTEP_ZPROBE_OFFSET)
     #error "BABYSTEP_ZPROBE_GFX_OVERLAY requires a BABYSTEP_ZPROBE_OFFSET."
@@ -865,7 +875,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 /**
  * Options only for EXTRUDERS > 1
  */
-#if EXTRUDERS > 1
+#if HAS_MULTI_EXTRUDER
 
   #if EXTRUDERS > 8
     #error "Marlin supports a maximum of 8 EXTRUDERS."
@@ -987,7 +997,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  * Mixing Extruder requirements
  */
 #if ENABLED(MIXING_EXTRUDER)
-  #if EXTRUDERS > 1
+  #if HAS_MULTI_EXTRUDER
     #error "For MIXING_EXTRUDER set MIXING_STEPPERS > 1 instead of EXTRUDERS > 1."
   #elif MIXING_STEPPERS < 2
     #error "You must set MIXING_STEPPERS >= 2 for a mixing extruder."
@@ -1133,7 +1143,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 /**
  * Required LCD language
  */
-#if HAS_CHARACTER_LCD && !defined(DISPLAY_CHARSET_HD44780)
+#if HAS_MARLINUI_HD44780 && !defined(DISPLAY_CHARSET_HD44780)
   #error "You must set DISPLAY_CHARSET_HD44780 to JAPANESE, WESTERN or CYRILLIC for your LCD controller."
 #endif
 
@@ -1455,7 +1465,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
   #endif
 #endif
 
-#if ENABLED(MESH_EDIT_GFX_OVERLAY) && !BOTH(AUTO_BED_LEVELING_UBL, HAS_GRAPHICAL_LCD)
+#if ENABLED(MESH_EDIT_GFX_OVERLAY) && !BOTH(AUTO_BED_LEVELING_UBL, HAS_MARLINUI_U8GLIB)
   #error "MESH_EDIT_GFX_OVERLAY requires AUTO_BED_LEVELING_UBL and a Graphical LCD."
 #endif
 
@@ -2182,16 +2192,16 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 #endif
 
 /**
- * Make sure features that need to write to the SD card are
- * disabled unless write support is enabled.
+ * Make sure features that need to write to the SD card can
  */
-#if ENABLED(SDCARD_READONLY)
+#if ENABLED(SDCARD_READONLY) && ANY(POWER_LOSS_RECOVERY, BINARY_FILE_TRANSFER, SDCARD_EEPROM_EMULATION)
+  #undef SDCARD_READONLY
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #error "POWER_LOSS_RECOVERY is incompatible with SDCARD_READONLY."
+    #warning "Either disable SDCARD_READONLY or disable POWER_LOSS_RECOVERY."
   #elif ENABLED(BINARY_FILE_TRANSFER)
-    #error "BINARY_FILE_TRANSFER is incompatible with SDCARD_READONLY."
+    #warning "Either disable SDCARD_READONLY or disable BINARY_FILE_TRANSFER."
   #elif ENABLED(SDCARD_EEPROM_EMULATION)
-    #error "SDCARD_EEPROM_EMULATION is incompatible with SDCARD_READONLY."
+    #warning "Either disable SDCARD_READONLY or disable SDCARD_EEPROM_EMULATION."
   #endif
 #endif
 
@@ -2264,7 +2274,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   + ENABLED(TFT_LVGL_UI_FSMC) \
   + ENABLED(TFT_LVGL_UI_SPI) \
   + ENABLED(ANYCUBIC_LCD_I3MEGA) \
-  + ENABLED(ANYCUBIC_LCD_CHIRON)
+  + ENABLED(ANYCUBIC_LCD_CHIRON) \
+  + ENABLED(TFTGLCD_PANEL_SPI) \
+  + ENABLED(TFTGLCD_PANEL_I2C)
   #error "Please select only one LCD controller option."
 #endif
 
@@ -2278,6 +2290,25 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 
 #if 1 < ENABLED(LCD_SCREEN_ROT_0) + ENABLED(LCD_SCREEN_ROT_90) + ENABLED(LCD_SCREEN_ROT_180) + ENABLED(LCD_SCREEN_ROT_270)
   #error "Please enable only one LCD_SCREEN_ROT_* option: 0, 90, 180, or 270."
+#endif
+
+/**
+ * Serial displays require a dedicated serial port
+ */
+#ifdef LCD_SERIAL_PORT
+  #if LCD_SERIAL_PORT == SERIAL_PORT
+    #error "LCD_SERIAL_PORT cannot be the same as SERIAL_PORT. Please update your configuration."
+  #elif defined(SERIAL_PORT_2) && LCD_SERIAL_PORT == SERIAL_PORT_2
+    #error "LCD_SERIAL_PORT cannot be the same as SERIAL_PORT_2. Please update your configuration."
+  #endif
+#else
+  #if HAS_DGUS_LCD
+    #error "The DGUS LCD requires LCD_SERIAL_PORT to be defined in Configuration.h"
+  #elif EITHER(ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON)
+    #error "The ANYCUBIC LCD requires LCD_SERIAL_PORT to be defined in Configuration.h"
+  #elif ENABLED(MALYAN_LCD)
+    #error "MALYAN_LCD requires LCD_SERIAL_PORT to be defined in Configuration.h"
+  #endif
 #endif
 
 /**
@@ -3052,11 +3083,9 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
   #undef _PIN_CONFLICT
 #endif
 
-#if !HAS_GRAPHICAL_LCD
+#if !HAS_MARLINUI_U8GLIB
   #if ENABLED(PRINT_PROGRESS_SHOW_DECIMALS)
     #error "PRINT_PROGRESS_SHOW_DECIMALS currently requires a Graphical LCD."
-  #elif ENABLED(SHOW_REMAINING_TIME)
-    #error "SHOW_REMAINING_TIME currently requires a Graphical LCD."
   #endif
 #endif
 

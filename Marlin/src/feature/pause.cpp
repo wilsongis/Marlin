@@ -61,6 +61,10 @@
   #include "../libs/buzzer.h"
 #endif
 
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "powerloss.h"
+#endif
+
 #include "../libs/nozzle.h"
 #include "pause.h"
 
@@ -128,8 +132,10 @@ static bool ensure_safe_temperature(const bool wait=true, const PauseMode mode=P
   DEBUG_SECTION(est, "ensure_safe_temperature", true);
   DEBUG_ECHOLNPAIR("... wait:", int(wait), " mode:", int(mode));
 
-  if (!DEBUGGING(DRYRUN) && thermalManager.targetTooColdToExtrude(active_extruder))
-    thermalManager.setTargetHotend(thermalManager.extrude_min_temp, active_extruder);
+  #if ENABLED(PREVENT_COLD_EXTRUSION)
+    if (!DEBUGGING(DRYRUN) && thermalManager.targetTooColdToExtrude(active_extruder))
+      thermalManager.setTargetHotend(thermalManager.extrude_min_temp, active_extruder);
+  #endif
 
   #if HAS_LCD_MENU
     lcd_pause_show_message(PAUSE_MESSAGE_HEATING, mode);
@@ -639,6 +645,9 @@ void resume_print(const float &slow_load_length/*=0*/, const float &fast_load_le
   // Now all extrusion positions are resumed and ready to be confirmed
   // Set extruder to saved position
   planner.set_e_position_mm((destination.e = current_position.e = resume_position.e));
+
+  // Write PLR now to update the z axis value
+  TERN_(POWER_LOSS_RECOVERY, if (recovery.enabled) recovery.save(true));
 
   TERN_(HAS_LCD_MENU, lcd_pause_show_message(PAUSE_MESSAGE_STATUS));
 

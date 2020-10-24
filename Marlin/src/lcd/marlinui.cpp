@@ -31,7 +31,7 @@
 #endif
 
 // All displays share the MarlinUI class
-#include "ultralcd.h"
+#include "marlinui.h"
 MarlinUI ui;
 
 #if HAS_DISPLAY
@@ -117,7 +117,7 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 #if HAS_WIRED_LCD
 
 #if HAS_MARLINUI_U8GLIB
-  #include "dogm/ultralcd_DOGM.h"
+  #include "dogm/marlinui_DOGM.h"
 #endif
 
 #include "lcdprint.h"
@@ -1477,10 +1477,6 @@ void MarlinUI::update() {
 
     set_status_P(msg, -1);
   }
-
-  #if ENABLED(SDSUPPORT)
-    extern bool wait_for_user, wait_for_heatup;
-  #endif
 
   void MarlinUI::abort_print() {
     #if ENABLED(SDSUPPORT)

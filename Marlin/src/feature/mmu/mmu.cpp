@@ -19,12 +19,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
-#ifdef USE_USB_COMPOSITE
-  //#warning "SD_CHECK_AND_RETRY isn't needed with USE_USB_COMPOSITE."
-  #undef SD_CHECK_AND_RETRY
-  #if DISABLED(NO_SD_HOST_DRIVE)
-    #define HAS_SD_HOST_DRIVE 1
-  #endif
-#endif
+#include "../../inc/MarlinConfig.h"
+
+#if HAS_PRUSA_MMU1
+
+#include "../module/stepper.h"
+
+void select_multiplexed_stepper(const uint8_t e) {
+  planner.synchronize();
+  disable_e_steppers();
+  WRITE(E_MUX0_PIN, TEST(e, 0) ? HIGH : LOW);
+  WRITE(E_MUX1_PIN, TEST(e, 1) ? HIGH : LOW);
+  WRITE(E_MUX2_PIN, TEST(e, 2) ? HIGH : LOW);
+  safe_delay(100);
+}
+
+#endif // HAS_PRUSA_MMU1

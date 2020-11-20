@@ -268,7 +268,12 @@
     #define LCD_PINS_ENABLE                -1
     #define LCD_PINS_RS                    -1
 
-    #define TFT_BUFFER_SIZE                 2400
+    #ifndef TFT_BUFFER_SIZE
+      #define TFT_BUFFER_SIZE               1200
+    #endif
+    #ifndef TFT_QUEUE_SIZE
+      #define TFT_QUEUE_SIZE                6144
+    #endif
 
     #define BTN_EN1                        P3_25
     #define BTN_EN2                        P3_26

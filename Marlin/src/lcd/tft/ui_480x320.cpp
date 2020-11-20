@@ -49,7 +49,9 @@
   #error "Seriously? High resolution TFT screen without menu?"
 #endif
 
-static bool draw_menu_navigation = false;
+#if ENABLED(TOUCH_SCREEN)
+  static bool draw_menu_navigation = false;
+#endif
 
 void MarlinUI::tft_idle() {
   #if ENABLED(TOUCH_SCREEN)
@@ -657,7 +659,7 @@ void menu_item(const uint8_t row, bool sel ) {
 
   menu_line(row, sel ? COLOR_SELECTION_BG : COLOR_BACKGROUND);
   #if ENABLED(TOUCH_SCREEN)
-    const TouchControlType tct = TERN(SINGLE_TOUCH_NAVIGATION, true, sel) ? CLICK : MENU_ITEM;
+    const TouchControlType tct = TERN(SINGLE_TOUCH_NAVIGATION, true, sel) ? MENU_CLICK : MENU_ITEM;
     touch.add_control(tct, 0, 4 + 45 * row, TFT_WIDTH, 43, encoderTopLine + row);
   #endif
 }
@@ -897,35 +899,37 @@ static void z_minus() {
   moveAxis(Z_AXIS, -1);
 }
 
-static void e_select() {
-  motionAxisState.e_selection++;
-  if (motionAxisState.e_selection >= EXTRUDERS) {
-    motionAxisState.e_selection = 0;
+#if ENABLED(TOUCH_SCREEN)
+  static void e_select() {
+    motionAxisState.e_selection++;
+    if (motionAxisState.e_selection >= EXTRUDERS) {
+      motionAxisState.e_selection = 0;
+    }
+
+    quick_feedback();
+    drawCurESelection();
+    drawAxisValue(E_AXIS);
   }
 
-  quick_feedback();
-  drawCurESelection();
-  drawAxisValue(E_AXIS);
-}
+  static void do_home() {
+    quick_feedback();
+    drawMessage(GET_TEXT(MSG_LEVEL_BED_HOMING));
+    queue.inject_P(G28_STR);
+    // Disable touch until home is done
+    TERN_(HAS_TFT_XPT2046, touch.disable());
+    drawAxisValue(E_AXIS);
+    drawAxisValue(X_AXIS);
+    drawAxisValue(Y_AXIS);
+    drawAxisValue(Z_AXIS);
+  }
 
-static void do_home() {
-  quick_feedback();
-  drawMessage(GET_TEXT(MSG_LEVEL_BED_HOMING));
-  queue.inject_P(G28_STR);
-  // Disable touch until home is done
-  TERN_(HAS_TFT_XPT2046, touch.disable());
-  drawAxisValue(E_AXIS);
-  drawAxisValue(X_AXIS);
-  drawAxisValue(Y_AXIS);
-  drawAxisValue(Z_AXIS);
-}
-
-static void step_size() {
-  motionAxisState.currentStepSize = motionAxisState.currentStepSize / 10.0;
-  if (motionAxisState.currentStepSize < 0.0015) motionAxisState.currentStepSize = 10.0;
-  quick_feedback();
-  drawCurStepValue();
-}
+  static void step_size() {
+    motionAxisState.currentStepSize = motionAxisState.currentStepSize / 10.0;
+    if (motionAxisState.currentStepSize < 0.0015) motionAxisState.currentStepSize = 10.0;
+    quick_feedback();
+    drawCurStepValue();
+  }
+#endif
 
 #if HAS_BED_PROBE
   static void z_select() {
@@ -1021,7 +1025,7 @@ void MarlinUI::move_axis_screen() {
   motionAxisState.zTypePos.x = x;
   motionAxisState.zTypePos.y = y;
   drawCurZSelection();
-  #if HAS_BED_PROBE
+  #if BOTH(HAS_BED_PROBE, TOUCH_SCREEN)
     if (!busy) touch.add_control(BUTTON, x, y, BTN_WIDTH, 34 * 2, (intptr_t)z_select);
   #endif
 

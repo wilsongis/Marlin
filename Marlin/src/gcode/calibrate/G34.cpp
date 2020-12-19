@@ -39,7 +39,7 @@
 void GcodeSuite::G34() {
 
   // Home before the alignment procedure
-  if (!all_axes_known()) home_all_axes();
+  if (!all_axes_trusted()) home_all_axes();
 
   SET_SOFT_ENDSTOP_LOOSE(true);
   TEMPORARY_BED_LEVELING_STATE(false);
@@ -63,7 +63,7 @@ void GcodeSuite::G34() {
 
   // Move Z to pounce position
   if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Setting Z Pounce");
-  do_blocking_move_to_z(zpounce, MMM_TO_MMS(HOMING_FEEDRATE_Z));
+  do_blocking_move_to_z(zpounce, homing_feedrate(Z_AXIS));
 
   // Store current motor settings, then apply reduced value
 

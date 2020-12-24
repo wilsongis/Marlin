@@ -1170,33 +1170,35 @@
 
 #endif // HAS_LCD_MENU
 
+#if HAS_DISPLAY
+// The timeout (in ms) to return to the status screen from sub-menus
+//#define LCD_TIMEOUT_TO_STATUS 15000
+
+#if ENABLED(SHOW_BOOTSCREEN)
+#define BOOTSCREEN_TIMEOUT 4000 // (ms) Total Duration to display the boot screen(s)
+#endif
+
 // Scroll a longer status message into view
 //#define STATUS_MESSAGE_SCROLLING
 
 // On the Info Screen, display XY with one decimal place when possible
 //#define LCD_DECIMAL_SMALL_XY
 
-// The timeout (in ms) to return to the status screen from sub-menus
-//#define LCD_TIMEOUT_TO_STATUS 15000
-
 // Add an 'M73' G-code to set the current percentage
 //#define LCD_SET_PROGRESS_MANUALLY
 
 // Show the E position (filament used) during printing
 //#define LCD_SHOW_E_TOTAL
-
-#if ENABLED(SHOW_BOOTSCREEN)
-#define BOOTSCREEN_TIMEOUT 4000 // (ms) Total Duration to display the boot screen(s)
 #endif
 
-#if EITHER(SDSUPPORT, LCD_SET_PROGRESS_MANUALLY) && ANY(HAS_MARLINUI_U8GLIB, HAS_MARLINUI_HD44780, IS_TFTGLCD_PANEL)
-#define SHOW_REMAINING_TIME // Display estimated time to completion
+#if EITHER(SDSUPPORT, LCD_SET_PROGRESS_MANUALLY) && ANY(HAS_MARLINUI_U8GLIB, HAS_MARLINUI_HD44780, IS_TFTGLCD_PANEL, EXTENSIBLE_UI)
+//#define SHOW_REMAINING_TIME       // Display estimated time to completion
 #if ENABLED(SHOW_REMAINING_TIME)
-#define USE_M73_REMAINING_TIME // Use remaining time from M73 command instead of estimation
+//#define USE_M73_REMAINING_TIME  // Use remaining time from M73 command instead of estimation
 //#define ROTATE_PROGRESS_DISPLAY // Display (P)rogress, (E)lapsed, and (R)emaining time
 #endif
 
-#if HAS_MARLINUI_U8GLIB
+#if EITHER(HAS_MARLINUI_U8GLIB, EXTENSIBLE_UI)
 //#define PRINT_PROGRESS_SHOW_DECIMALS // Show progress with decimal digits
 #endif
 
@@ -1206,8 +1208,8 @@
 #define PROGRESS_BAR_BAR_TIME 2000 // (ms) Amount of time to show the bar
 #define PROGRESS_BAR_MSG_TIME 3000 // (ms) Amount of time to show the status message
 #define PROGRESS_MSG_EXPIRE 0      // (ms) Amount of time to retain the status message (0=forever)
-//#define PROGRESS_MSG_ONCE         // Show the message for MSG_TIME then clear it
-//#define LCD_PROGRESS_BAR_TEST     // Add a menu item to test the progress bar
+                                   //#define PROGRESS_MSG_ONCE         // Show the message for MSG_TIME then clear it
+                                   //#define LCD_PROGRESS_BAR_TEST     // Add a menu item to test the progress bar
 #endif
 #endif
 #endif
@@ -1599,6 +1601,9 @@
 //#define TOUCH_UI_UTF8_FRACTIONS     // ¼ ½ ¾
 //#define TOUCH_UI_UTF8_SYMBOLS       // µ ¶ ¦ § ¬
 #endif
+
+// Cyrillic character set, costs about 27KiB of flash
+//#define TOUCH_UI_UTF8_CYRILLIC_CHARSET
 #endif
 
 // Use a smaller font when labels don't fit buttons
@@ -1768,6 +1773,10 @@
 //#define MESH_MIN_Y MESH_INSET
 //#define MESH_MAX_X X_BED_SIZE - (MESH_INSET)
 //#define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
+#endif
+
+#if BOTH(AUTO_BED_LEVELING_UBL, EEPROM_SETTINGS)
+//#define OPTIMIZED_MESH_STORAGE  // Store mesh with less precision to save EEPROM space
 #endif
 
 /**

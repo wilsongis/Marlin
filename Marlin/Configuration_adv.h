@@ -813,13 +813,13 @@
 //#define ASSISTED_TRAMMING
 #if ENABLED(ASSISTED_TRAMMING)
 
-// Define positions for probing points, use the hotend as reference not the sensor.
+// Define positions for probe points.
 #define TRAMMING_POINT_XY                          \
    {                                               \
-      {20, 20}, {200, 20}, {200, 200}, { 20, 200 } \
+      {20, 20}, {180, 20}, {180, 180}, { 20, 180 } \
    }
 
-// Define positions names for probing points.
+// Define position names for probe points.
 #define TRAMMING_POINT_NAME_1 "Front-Left"
 #define TRAMMING_POINT_NAME_2 "Front-Right"
 #define TRAMMING_POINT_NAME_3 "Back-Right"
@@ -1176,6 +1176,9 @@
 
 #if ENABLED(SHOW_BOOTSCREEN)
 #define BOOTSCREEN_TIMEOUT 4000 // (ms) Total Duration to display the boot screen(s)
+#if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
+#define BOOT_MARLIN_LOGO_SMALL // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
+#endif
 #endif
 
 // Scroll a longer status message into view
@@ -1207,8 +1210,8 @@
 #if ENABLED(LCD_PROGRESS_BAR)
 #define PROGRESS_BAR_BAR_TIME 2000 // (ms) Amount of time to show the bar
 #define PROGRESS_BAR_MSG_TIME 3000 // (ms) Amount of time to show the status message
-#define PROGRESS_MSG_EXPIRE 0      // (ms) Amount of time to retain the status message (0=forever)
-                                   //#define PROGRESS_MSG_ONCE         // Show the message for MSG_TIME then clear it
+#define PROGRESS_MSG_EXPIRE 0      // (ms) Amount of time to retain the status message (0=forever)                    \
+                                   //#define PROGRESS_MSG_ONCE         // Show the message for MSG_TIME then clear it \
                                    //#define LCD_PROGRESS_BAR_TEST     // Add a menu item to test the progress bar
 #endif
 #endif
@@ -1359,9 +1362,6 @@
    */
 //#define USB_FLASH_DRIVE_SUPPORT
 #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
-#define USB_CS_PIN SDSS
-#define USB_INTR_PIN SD_DETECT_PIN
-
 /**
      * USB Host Shield Library
      *
@@ -1372,7 +1372,18 @@
      *   is less tested and is known to interfere with Servos.
      *   [1] This requires USB_INTR_PIN to be interrupt-capable.
      */
+//#define USE_UHS2_USB
 //#define USE_UHS3_USB
+
+/**
+     * Native USB Host supported by some boards (USB OTG)
+     */
+//#define USE_OTG_USB_HOST
+
+#if DISABLED(USE_OTG_USB_HOST)
+#define USB_CS_PIN SDSS
+#define USB_INTR_PIN SD_DETECT_PIN
+#endif
 #endif
 
 /**
@@ -1481,13 +1492,12 @@
 #define STATUS_HOTEND_ANIM     // Use a second bitmap to indicate hotend heating
 #define STATUS_BED_ANIM        // Use a second bitmap to indicate bed heating
 #define STATUS_CHAMBER_ANIM    // Use a second bitmap to indicate chamber heating
-//#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
-//#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
-//#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
-//#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
-//#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-//#define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
-//#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
+                               //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
+                               //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
+                               //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
+                               //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
+                               //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
+                               //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
 
 // Frivolous Game Options
 //#define MARLIN_BRICKOUT

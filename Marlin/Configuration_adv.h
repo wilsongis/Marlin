@@ -828,8 +828,8 @@
 #define RESTORE_LEVELING_AFTER_G35 // Enable to restore leveling setup after operation
 //#define REPORT_TRAMMING_MM          // Report Z deviation (mm) for each point relative to the first
 
-//#define ASSISTED_TRAMMING_MENU_ITEM // Add a menu item to run G35 Assisted Tramming (MarlinUI)
-//#define ASSISTED_TRAMMING_WIZARD    // Make the menu item open a Tramming Wizard sub-menu
+//#define ASSISTED_TRAMMING_WIZARD    // Add a Tramming Wizard to the LCD menu
+
 //#define ASSISTED_TRAMMING_WAIT_POSITION { X_CENTER, Y_CENTER, 30 } // Move the nozzle out of the way for adjustment
 
 /**
@@ -1218,6 +1218,16 @@
 #endif
 
 #if ENABLED(SDSUPPORT)
+/**
+   * SD Card SPI Speed
+   * May be required to resolve "volume init" errors.
+   *
+   * Enable and set to SPI_HALF_SPEED, SPI_QUARTER_SPEED, or SPI_EIGHTH_SPEED
+   *  otherwise full speed will be applied.
+   *
+   * :['SPI_HALF_SPEED', 'SPI_QUARTER_SPEED', 'SPI_EIGHTH_SPEED']
+   */
+//#define SD_SPI_SPEED SPI_HALF_SPEED
 
 // The standard SD detect circuit reads LOW when media is inserted and HIGH when empty.
 // Enable this option and set to HIGH if your SD cards are incorrectly detected.
@@ -1491,12 +1501,12 @@
 #define STATUS_HOTEND_INVERTED // Show solid nozzle bitmaps when heating (Requires STATUS_HOTEND_ANIM)
 #define STATUS_HOTEND_ANIM     // Use a second bitmap to indicate hotend heating
 #define STATUS_BED_ANIM        // Use a second bitmap to indicate bed heating
-#define STATUS_CHAMBER_ANIM    // Use a second bitmap to indicate chamber heating
-                               //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
-                               //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
-                               //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
-                               //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
-                               //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
+#define STATUS_CHAMBER_ANIM    // Use a second bitmap to indicate chamber heating                                            \
+                               //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active \
+                               //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap                         \
+                               //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap                         \
+                               //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames            \
+                               //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar                         \
                                //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
 
 // Frivolous Game Options

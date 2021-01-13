@@ -1401,18 +1401,19 @@
 // Add an optimized binary file transfer mode, initiated with 'M28 B1'
 //#define BINARY_FILE_TRANSFER
 
-#if HAS_SDCARD_CONNECTION
 /**
-     * Set this option to one of the following (or the board's defaults apply):
-     *
-     *           LCD - Use the SD drive in the external LCD controller.
-     *       ONBOARD - Use the SD drive on the control board. (No SD_DETECT_PIN. M21 to init.)
-     *  CUSTOM_CABLE - Use a custom cable to access the SD (as defined in a pins file).
-     *
-     * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
-     */
-#define SDCARD_CONNECTION ONBOARD
-#endif
+   * Set this option to one of the following (or the board's defaults apply):
+   *
+   *           LCD - Use the SD drive in the external LCD controller.
+   *       ONBOARD - Use the SD drive on the control board.
+   *  CUSTOM_CABLE - Use a custom cable to access the SD (as defined in a pins file).
+   *
+   * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
+   */
+//#define SDCARD_CONNECTION LCD
+
+// Enable if SD detect is rendered useless (e.g., by using an SD extender)
+//#define NO_SD_DETECT
 
 #endif // SDSUPPORT
 
@@ -3076,8 +3077,12 @@
 #define SPEED_POWER_SLOPE 0.3922 // SPEED_POWER_SLOPE = SPEED_POWER_MAX / 255
 #define SPEED_POWER_INTERCEPT 0
 #define SPEED_POWER_MIN 0
-#define SPEED_POWER_MAX 100    // 0-100%
-#define SPEED_POWER_STARTUP 80 // The default value for speed power when M3 is called without arguments
+#define SPEED_POWER_MAX 100      // 0-100%
+#define SPEED_POWER_STARTUP 80   // The default value for speed power when M3 is called without arguments
+
+// Define the minimum and maximum test pulse time values for a laser test fire function
+#define LASER_TEST_PULSE_MIN 1   // Used with Laser Control Menu
+#define LASER_TEST_PULSE_MAX 999 // Caution: Menu may not show more than 3 characters
 
 /**
      * Enable inline laser power to be handled in the planner / stepper routines.

@@ -66,13 +66,13 @@ static void event_handler(lv_obj_t *obj, lv_event_t event) {
       queue.inject_P(PSTR("M84 X Y"));
       break;
     case ID_H_RETURN:
-      lv_clear_home();
-      lv_draw_tool();
+      clear_cur_ui();
+      draw_return_ui();
       break;
   }
 }
 
-void lv_draw_home(void) {
+void lv_draw_home() {
   scr = lv_screen_create(ZERO_UI);
   lv_big_button_create(scr, "F:/bmp_zeroAll.bin", home_menu.home_all, INTERVAL_V, titleHeight, event_handler, ID_H_ALL);
   lv_big_button_create(scr, "F:/bmp_zeroX.bin", home_menu.home_x, BTN_X_PIXEL + INTERVAL_V * 2, titleHeight, event_handler, ID_H_X);

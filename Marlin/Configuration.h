@@ -1499,7 +1499,7 @@
   {                              \
     30, 30, 30, 30               \
   }                              // (mm) Left, Front, Right, Back insets
-#define LEVEL_CORNERS_HEIGHT 0.1 // (mm) Z height of nozzle at leveling points
+#define LEVEL_CORNERS_HEIGHT 0.0 // (mm) Z height of nozzle at leveling points
 #define LEVEL_CORNERS_Z_HOP 4.0  // (mm) Z height of nozzle between leveling points
 //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
 //#define LEVEL_CORNERS_USE_PROBE
@@ -1508,6 +1508,28 @@
 #define LEVEL_CORNERS_VERIFY_RAISED // After adjustment triggers the probe, re-probe to verify
 //#define LEVEL_CORNERS_AUDIO_FEEDBACK
 #endif
+
+/**
+   * Corner Leveling Order
+   *
+   * Set 2 or 4 points. When 2 points are given, the 3rd is the center of the opposite edge.
+   *
+   *  LF  Left-Front    RF  Right-Front
+   *  LB  Left-Back     RB  Right-Back
+   *
+   * Examples:
+   *
+   *      Default        {LF,RB,LB,RF}         {LF,RF}           {LB,LF}
+   *  LB --------- RB   LB --------- RB    LB --------- RB   LB --------- RB
+   *  |  4       3  |   | 3         2 |    |     <3>     |   | 1           |
+   *  |             |   |             |    |             |   |          <3>|
+   *  |  1       2  |   | 1         4 |    | 1         2 |   | 2           |
+   *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
+   */
+#define LEVEL_CORNERS_LEVELING_ORDER \
+  {                                  \
+    LF, RF, RB, LB                   \
+  }
 #endif
 
 /**
@@ -2469,7 +2491,7 @@
 //#define TFT_LVGL_UI
 
 #if ENABLED(TFT_LVGL_UI)
-  //#define MKS_WIFI_MODULE  // MKS WiFi module
+//#define MKS_WIFI_MODULE  // MKS WiFi module
 #endif
 
 /**

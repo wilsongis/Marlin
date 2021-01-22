@@ -1558,6 +1558,16 @@
 #endif // HAS_DGUS_LCD
 
 //
+// Specify additional languages for the UI. Default specified by LCD_LANGUAGE.
+//
+#if EITHER(DOGLCD, TOUCH_UI_FTDI_EVE)
+//#define LCD_LANGUAGE_2 fr
+//#define LCD_LANGUAGE_3 de
+//#define LCD_LANGUAGE_4 es
+//#define LCD_LANGUAGE_5 it
+#endif
+
+//
 // Touch UI for the FTDI Embedded Video Engine (EVE)
 //
 #if ENABLED(TOUCH_UI_FTDI_EVE)
@@ -1631,13 +1641,6 @@
 
 // Use a smaller font when labels don't fit buttons
 #define TOUCH_UI_FIT_TEXT
-
-// Allow language selection from menu at run-time (otherwise use LCD_LANGUAGE)
-//#define LCD_LANGUAGE_1 en
-//#define LCD_LANGUAGE_2 fr
-//#define LCD_LANGUAGE_3 de
-//#define LCD_LANGUAGE_4 es
-//#define LCD_LANGUAGE_5 it
 
 // Use a numeric passcode for "Screen lock" keypad.
 // (recommended for smaller displays)
@@ -3386,7 +3389,7 @@
 //#define USER_SCRIPT_RETURN  // Return to status screen after a script
 
 #define USER_DESC_1 "Home & UBL Info"
-#define USER_GCODE_1 "G29NW"
+#define USER_GCODE_1 "G28\nG29W"
 
 #define USER_DESC_2 "Preheat for " PREHEAT_1_LABEL
 #define USER_GCODE_2 "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
@@ -3395,7 +3398,7 @@
 #define USER_GCODE_3 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
 
 #define USER_DESC_4 "Heat Bed/Home/Level"
-#define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG29N"
+#define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
 
 #define USER_DESC_5 "Home & Info"
 #define USER_GCODE_5 "G28\nM503"

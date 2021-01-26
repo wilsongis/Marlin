@@ -2107,7 +2107,7 @@
 #define RETRACT_RECOVER_FEEDRATE 8      // (mm/s) Default feedrate for recovering from retraction
 #define RETRACT_RECOVER_FEEDRATE_SWAP 8 // (mm/s) Default feedrate for recovering from swap retraction
 #if ENABLED(MIXING_EXTRUDER)
-//#define RETRACT_SYNC_MIXING         // Retract and restore all mixing steppers simultaneously
+//#define RETRACT_SYNC_MIXING           // Retract and restore all mixing steppers simultaneously
 #endif
 #endif
 

@@ -39,7 +39,7 @@
 
 #ifdef USBCON
   #include <USBSerial.h>
-  #include "../../core/serial_hook.h" 
+  #include "../../core/serial_hook.h"
   typedef ForwardSerial0Type< decltype(SerialUSB) > DefaultSerial;
   extern DefaultSerial MSerial;
 #endif
@@ -135,6 +135,8 @@ extern uint16_t HAL_adc_result;
 
 // Enable hooks into  setup for HAL
 void HAL_init();
+#define HAL_IDLETASK 1
+void HAL_idletask();
 
 // Clear reset reason
 void HAL_clear_reset_source();

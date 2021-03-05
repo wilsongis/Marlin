@@ -143,13 +143,17 @@
 //
 // Heated Chamber options
 //
+#if DISABLED(PIDTEMPCHAMBER)
+#define CHAMBER_CHECK_INTERVAL 5000 // (ms) Interval between checks in bang-bang control
+#if ENABLED(CHAMBER_LIMIT_SWITCHING)
+#define CHAMBER_HYSTERESIS 2 // (°C) Only set the relevant heater state when ABS(T-target) > CHAMBER_HYSTERESIS
+#endif
+#endif
+
 #if TEMP_SENSOR_CHAMBER
-#define CHAMBER_MINTEMP 5
-#define CHAMBER_MAXTEMP 60
-#define TEMP_CHAMBER_HYSTERESIS 1 // (°C) Temperature proximity considered "close enough" to the target
-//#define CHAMBER_LIMIT_SWITCHING
-//#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
+//#define HEATER_CHAMBER_PIN      P2_04   // Required heater on/off pin (example: SKR 1.4 Turbo HE1 plug)
 //#define HEATER_CHAMBER_INVERTING false
+//#define FAN1_PIN                   -1   // Remove the fan signal on pin P2_04 (example: SKR 1.4 Turbo HE1 plug)
 
 //#define CHAMBER_FAN               // Enable a fan on the chamber
 #if ENABLED(CHAMBER_FAN)
@@ -515,14 +519,19 @@
 #define INVERT_CASE_LIGHT false           // Set true if Case Light is ON when pin is LOW
 #define CASE_LIGHT_DEFAULT_ON true        // Set default power-up state on
 #define CASE_LIGHT_DEFAULT_BRIGHTNESS 105 // Set default power-up brightness (0-255, requires PWM pin)
-//#define CASE_LIGHT_MAX_PWM 128            // Limit pwm
-//#define CASE_LIGHT_MENU                   // Add Case Light options to the LCD menu
 //#define CASE_LIGHT_NO_BRIGHTNESS          // Disable brightness control. Enable for non-PWM lighting.
-//#define CASE_LIGHT_USE_NEOPIXEL           // Use NeoPixel LED as case light, requires NEOPIXEL_LED.
-#if ENABLED(CASE_LIGHT_USE_NEOPIXEL)
-#define CASE_LIGHT_NEOPIXEL_COLOR \
-  {                               \
-    255, 255, 255, 255            \
+//#define CASE_LIGHT_MAX_PWM 128            // Limit PWM duty cycle (0-255)
+//#define CASE_LIGHT_MENU                   // Add Case Light options to the LCD menu
+#if ENABLED(NEOPIXEL_LED)
+//#define CASE_LIGHT_USE_NEOPIXEL         // Use NeoPixel LED as case light
+#endif
+#if EITHER(RGB_LED, RGBW_LED)
+//#define CASE_LIGHT_USE_RGB_LED          // Use RGB / RGBW LED as case light
+#endif
+#if EITHER(CASE_LIGHT_USE_NEOPIXEL, CASE_LIGHT_USE_RGB_LED)
+#define CASE_LIGHT_DEFAULT_COLOR \
+  {                              \
+    255, 255, 255, 255           \
   } // { Red, Green, Blue, White }
 #endif
 #endif
@@ -740,8 +749,8 @@
 /**
    * Use "HIGH SPEED" mode for probing.
    * Danger: Disable if your probe sometimes fails. Only suitable for stable well-adjusted systems.
-   * This feature was designed for Delta's with very fast Z moves however higher speed cartesians may function
-   * If the machine cannot raise the probe fast enough after a trigger, it may enter a fault state.
+   * This feature was designed for Deltabots with very fast Z moves; however, higher speed Cartesians
+   * might be able to use it. If the machine can't raise Z fast enough the BLTouch may go into ALARM.
    */
 #define BLTOUCH_HS_MODE
 
@@ -875,9 +884,6 @@
 #define DISABLE_INACTIVE_Z true // Set 'false' if the nozzle could fall onto your printed part!
 #define DISABLE_INACTIVE_E true
 
-// If the Nozzle or Bed falls when the Z stepper is disabled, set its resting position here.
-//#define Z_AFTER_DEACTIVATE Z_HOME_POS
-
 // Default Minimum Feedrates for printing and travel moves
 #define DEFAULT_MINIMUMFEEDRATE 0.0   // (mm/s) Minimum feedrate. Set with M205 S.
 #define DEFAULT_MINTRAVELFEEDRATE 0.0 // (mm/s) Minimum travel feedrate. Set with M205 T.
@@ -937,9 +943,9 @@
 // When measuring, the probe will move up to BACKLASH_MEASUREMENT_LIMIT
 // mm away from point of contact in BACKLASH_MEASUREMENT_RESOLUTION
 // increments while checking for the contact to be broken.
-#define BACKLASH_MEASUREMENT_LIMIT 0.5                   // (mm)
-#define BACKLASH_MEASUREMENT_RESOLUTION 0.005            // (mm)
-#define BACKLASH_MEASUREMENT_FEEDRATE Z_PROBE_SPEED_SLOW // (mm/min)
+#define BACKLASH_MEASUREMENT_LIMIT 0.5                      // (mm)
+#define BACKLASH_MEASUREMENT_RESOLUTION 0.005               // (mm)
+#define BACKLASH_MEASUREMENT_FEEDRATE Z_PROBE_FEEDRATE_SLOW // (mm/min)
 #endif
 #endif
 #endif
@@ -1174,6 +1180,9 @@
 #endif
 #endif
 
+// Insert a menu for preheating at the top level to allow for quick access
+//#define PREHEAT_SHORTCUT_MENU_ITEM
+
 #endif // HAS_LCD_MENU
 
 #if HAS_DISPLAY
@@ -1278,7 +1287,6 @@
 #if ENABLED(POWER_LOSS_RECOVERY)
 #define PLR_ENABLED_DEFAULT false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
 //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
-//#define POWER_LOSS_RECOVER_ZHOME  // Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
 //#define POWER_LOSS_ZRAISE       2 // (mm) Z axis raise on resume (on power loss with UPS)
 //#define POWER_LOSS_PIN         44 // Pin to detect power loss. Set to -1 to disable default pin on boards without module.
 //#define POWER_LOSS_STATE     HIGH // State of pin indicating power loss
@@ -1290,6 +1298,12 @@
 // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
 // especially with "vase mode" printing. Set too high and vases cannot be continued.
 #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
+
+// Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
+//#define POWER_LOSS_RECOVER_ZHOME
+#if ENABLED(POWER_LOSS_RECOVER_ZHOME)
+//#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
+#endif
 #endif
 
 /**
@@ -1539,12 +1553,12 @@
 
 #define DGUS_UPDATE_INTERVAL_MS 500 // (ms) Interval between automatic screen updates
 
-#if EITHER(DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_HIPRECY)
+#if ANY(DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_MKS, DGUS_LCD_UI_HIPRECY)
 #define DGUS_PRINT_FILENAME // Display the filename during printing
 #define DGUS_PREHEAT_UI     // Display a preheat screen during heatup
 
-#if ENABLED(DGUS_LCD_UI_FYSETC)
-//#define DGUS_UI_MOVE_DIS_OPTION   // Disabled by default for UI_FYSETC
+#if EITHER(DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_MKS)
+//#define DGUS_UI_MOVE_DIS_OPTION   // Disabled by default for FYSETC and MKS
 #else
 #define DGUS_UI_MOVE_DIS_OPTION // Enabled by default for UI_HIPRECY
 #endif
@@ -1587,6 +1601,8 @@
 //#define LCD_HAOYU_FT810CB         // Haoyu with 5" (800x480)
 //#define LCD_ALEPHOBJECTS_CLCD_UI  // Aleph Objects Color LCD UI
 //#define LCD_FYSETC_TFT81050       // FYSETC with 5" (800x480)
+//#define LCD_EVE3_50G              // Matrix Orbital 5.0", 800x480, BT815
+//#define LCD_EVE2_50G              // Matrix Orbital 5.0", 800x480, FT813
 
 // Correct the resolution if not using the stock TFT panel.
 //#define TOUCH_UI_320x240
@@ -2049,6 +2065,12 @@
 //#define SERIAL_STATS_DROPPED_RX
 #endif
 
+// Monitor RX buffer usage
+// Dump an error to the serial port if the serial receive buffer overflows.
+// If you see these errors, increase the RX_BUFFER_SIZE value.
+// Not supported on all platforms.
+//#define RX_BUFFER_MONITOR
+
 /**
  * Emergency Command Parser
  *
@@ -2267,7 +2289,7 @@
 #if AXIS_DRIVER_TYPE_X2(TMC26X)
 #define X2_MAX_CURRENT 1000
 #define X2_SENSE_RESISTOR 91
-#define X2_MICROSTEPS 16
+#define X2_MICROSTEPS X_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_Y(TMC26X)
@@ -2279,7 +2301,7 @@
 #if AXIS_DRIVER_TYPE_Y2(TMC26X)
 #define Y2_MAX_CURRENT 1000
 #define Y2_SENSE_RESISTOR 91
-#define Y2_MICROSTEPS 16
+#define Y2_MICROSTEPS Y_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_Z(TMC26X)
@@ -2291,19 +2313,19 @@
 #if AXIS_DRIVER_TYPE_Z2(TMC26X)
 #define Z2_MAX_CURRENT 1000
 #define Z2_SENSE_RESISTOR 91
-#define Z2_MICROSTEPS 16
+#define Z2_MICROSTEPS Z_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_Z3(TMC26X)
 #define Z3_MAX_CURRENT 1000
 #define Z3_SENSE_RESISTOR 91
-#define Z3_MICROSTEPS 16
+#define Z3_MICROSTEPS Z_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_Z4(TMC26X)
 #define Z4_MAX_CURRENT 1000
 #define Z4_SENSE_RESISTOR 91
-#define Z4_MICROSTEPS 16
+#define Z4_MICROSTEPS Z_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E0(TMC26X)
@@ -2315,43 +2337,43 @@
 #if AXIS_DRIVER_TYPE_E1(TMC26X)
 #define E1_MAX_CURRENT 1000
 #define E1_SENSE_RESISTOR 91
-#define E1_MICROSTEPS 16
+#define E1_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E2(TMC26X)
 #define E2_MAX_CURRENT 1000
 #define E2_SENSE_RESISTOR 91
-#define E2_MICROSTEPS 16
+#define E2_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E3(TMC26X)
 #define E3_MAX_CURRENT 1000
 #define E3_SENSE_RESISTOR 91
-#define E3_MICROSTEPS 16
+#define E3_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E4(TMC26X)
 #define E4_MAX_CURRENT 1000
 #define E4_SENSE_RESISTOR 91
-#define E4_MICROSTEPS 16
+#define E4_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E5(TMC26X)
 #define E5_MAX_CURRENT 1000
 #define E5_SENSE_RESISTOR 91
-#define E5_MICROSTEPS 16
+#define E5_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E6(TMC26X)
 #define E6_MAX_CURRENT 1000
 #define E6_SENSE_RESISTOR 91
-#define E6_MICROSTEPS 16
+#define E6_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #if AXIS_DRIVER_TYPE_E7(TMC26X)
 #define E7_MAX_CURRENT 1000
 #define E7_SENSE_RESISTOR 91
-#define E7_MICROSTEPS 16
+#define E7_MICROSTEPS E0_MICROSTEPS
 #endif
 
 #endif // TMC26X
@@ -2791,7 +2813,7 @@
 #endif
 
 #if AXIS_IS_L64XX(X2)
-#define X2_MICROSTEPS 128
+#define X2_MICROSTEPS X_MICROSTEPS
 #define X2_OVERCURRENT 2000
 #define X2_STALLCURRENT 1500
 #define X2_MAX_VOLTAGE 127
@@ -2809,7 +2831,7 @@
 #endif
 
 #if AXIS_IS_L64XX(Y2)
-#define Y2_MICROSTEPS 128
+#define Y2_MICROSTEPS Y_MICROSTEPS
 #define Y2_OVERCURRENT 2000
 #define Y2_STALLCURRENT 1500
 #define Y2_MAX_VOLTAGE 127
@@ -2827,7 +2849,7 @@
 #endif
 
 #if AXIS_IS_L64XX(Z2)
-#define Z2_MICROSTEPS 128
+#define Z2_MICROSTEPS Z_MICROSTEPS
 #define Z2_OVERCURRENT 2000
 #define Z2_STALLCURRENT 1500
 #define Z2_MAX_VOLTAGE 127
@@ -2836,7 +2858,7 @@
 #endif
 
 #if AXIS_IS_L64XX(Z3)
-#define Z3_MICROSTEPS 128
+#define Z3_MICROSTEPS Z_MICROSTEPS
 #define Z3_OVERCURRENT 2000
 #define Z3_STALLCURRENT 1500
 #define Z3_MAX_VOLTAGE 127
@@ -2845,7 +2867,7 @@
 #endif
 
 #if AXIS_IS_L64XX(Z4)
-#define Z4_MICROSTEPS 128
+#define Z4_MICROSTEPS Z_MICROSTEPS
 #define Z4_OVERCURRENT 2000
 #define Z4_STALLCURRENT 1500
 #define Z4_MAX_VOLTAGE 127
@@ -2863,7 +2885,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E1)
-#define E1_MICROSTEPS 128
+#define E1_MICROSTEPS E0_MICROSTEPS
 #define E1_OVERCURRENT 2000
 #define E1_STALLCURRENT 1500
 #define E1_MAX_VOLTAGE 127
@@ -2872,7 +2894,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E2)
-#define E2_MICROSTEPS 128
+#define E2_MICROSTEPS E0_MICROSTEPS
 #define E2_OVERCURRENT 2000
 #define E2_STALLCURRENT 1500
 #define E2_MAX_VOLTAGE 127
@@ -2881,7 +2903,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E3)
-#define E3_MICROSTEPS 128
+#define E3_MICROSTEPS E0_MICROSTEPS
 #define E3_OVERCURRENT 2000
 #define E3_STALLCURRENT 1500
 #define E3_MAX_VOLTAGE 127
@@ -2890,7 +2912,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E4)
-#define E4_MICROSTEPS 128
+#define E4_MICROSTEPS E0_MICROSTEPS
 #define E4_OVERCURRENT 2000
 #define E4_STALLCURRENT 1500
 #define E4_MAX_VOLTAGE 127
@@ -2899,7 +2921,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E5)
-#define E5_MICROSTEPS 128
+#define E5_MICROSTEPS E0_MICROSTEPS
 #define E5_OVERCURRENT 2000
 #define E5_STALLCURRENT 1500
 #define E5_MAX_VOLTAGE 127
@@ -2908,7 +2930,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E6)
-#define E6_MICROSTEPS 128
+#define E6_MICROSTEPS E0_MICROSTEPS
 #define E6_OVERCURRENT 2000
 #define E6_STALLCURRENT 1500
 #define E6_MAX_VOLTAGE 127
@@ -2917,7 +2939,7 @@
 #endif
 
 #if AXIS_IS_L64XX(E7)
-#define E7_MICROSTEPS 128
+#define E7_MICROSTEPS E0_MICROSTEPS
 #define E7_OVERCURRENT 2000
 #define E7_STALLCURRENT 1500
 #define E7_MAX_VOLTAGE 127
@@ -3390,6 +3412,37 @@
 #endif
 
 /**
+ * User-defined buttons to run custom G-code.
+ * Up to 25 may be defined.
+ */
+//#define CUSTOM_USER_BUTTONS
+#if ENABLED(CUSTOM_USER_BUTTONS)
+//#define BUTTON1_PIN -1
+#if PIN_EXISTS(BUTTON1_PIN)
+#define BUTTON1_HIT_STATE LOW       // State of the triggered button. NC=LOW. NO=HIGH.
+#define BUTTON1_WHEN_PRINTING false // Button allowed to trigger during printing?
+#define BUTTON1_GCODE "G28"
+#define BUTTON1_DESC "Homing" // Optional string to set the LCD status
+#endif
+
+//#define BUTTON2_PIN -1
+#if PIN_EXISTS(BUTTON2_PIN)
+#define BUTTON2_HIT_STATE LOW
+#define BUTTON2_WHEN_PRINTING false
+#define BUTTON2_GCODE "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
+#define BUTTON2_DESC "Preheat for " PREHEAT_1_LABEL
+#endif
+
+//#define BUTTON3_PIN -1
+#if PIN_EXISTS(BUTTON3_PIN)
+#define BUTTON3_HIT_STATE LOW
+#define BUTTON3_WHEN_PRINTING false
+#define BUTTON3_GCODE "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
+#define BUTTON3_DESC "Preheat for " PREHEAT_2_LABEL
+#endif
+#endif
+
+/**
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
@@ -3794,3 +3847,10 @@
 
 // Enable Marlin dev mode which adds some special commands
 //#define MARLIN_DEV_MODE
+
+/**
+ * Postmortem Debugging captures misbehavior and outputs the CPU status and backtrace to serial.
+ * When running in the debugger it will break for debugging. This is useful to help understand
+ * a crash from a remote location. Requires ~400 bytes of SRAM and 5Kb of flash.
+ */
+//#define POSTMORTEM_DEBUGGING

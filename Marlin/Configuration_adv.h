@@ -1654,6 +1654,31 @@
 #endif // HAS_DGUS_LCD
 
 //
+// Additional options for AnyCubic Chiron TFT displays
+//
+#if ENABLED(ANYCUBIC_LCD_CHIRON)
+// By default the type of panel is automatically detected.
+// Enable one of these options if you know the panel type.
+//#define CHIRON_TFT_STANDARD
+//#define CHIRON_TFT_NEW
+
+// Enable the longer Anycubic powerup startup tune
+//#define AC_DEFAULT_STARTUP_TUNE
+
+/**
+   * Display Folders
+   * By default the file browser lists all G-code files (including those in subfolders) in a flat list.
+   * Enable this option to display a hierarchical file browser.
+   *
+   * NOTES:
+   * - Without this option it helps to enable SDCARD_SORT_ALPHA so files are sorted before/after folders.
+   * - When used with the "new" panel, folder names will also have '.gcode' appended to their names.
+   *   This hack is currently required to force the panel to show folders.
+   */
+#define AC_SD_FOLDER_VIEW
+#endif
+
+//
 // Specify additional languages for the UI. Default specified by LCD_LANGUAGE.
 //
 #if ANY(DOGLCD, TFT_COLOR_UI, TOUCH_UI_FTDI_EVE)
@@ -2157,6 +2182,26 @@
  */
 #define EMERGENCY_PARSER
 
+/**
+ * Realtime Reporting (requires EMERGENCY_PARSER)
+ *
+ * - Report position and state of the machine (like Grbl).
+ * - Auto-report position during long moves.
+ * - Useful for CNC/LASER.
+ *
+ * Adds support for commands:
+ *  S000 : Report State and Position while moving.
+ *  P000 : Instant Pause / Hold while moving.
+ *  R000 : Resume from Pause / Hold.
+ *
+ * - During Hold all Emergency Parser commands are available, as usual.
+ * - Enable NANODLP_Z_SYNC and NANODLP_ALL_AXIS for move command end-state reports.
+ */
+//#define REALTIME_REPORTING_COMMANDS
+#if ENABLED(REALTIME_REPORTING_COMMANDS)
+//#define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
+#endif
+
 // Bad Serial-connections can miss a received command by sending an 'ok'
 // Therefore some clients abort after 30 seconds in a timeout.
 // Some other clients start sending commands while receiving a 'wait'.
@@ -2230,6 +2275,12 @@
 #if ENABLED(TOOLCHANGE_NO_RETURN)
 //#define EVENT_GCODE_AFTER_TOOLCHANGE "G12X"   // Extra G-code to run after tool-change
 #endif
+
+/**
+   * Tool Sensors detect when tools have been picked up or dropped.
+   * Requires the pins TOOL_SENSOR1_PIN, TOOL_SENSOR2_PIN, etc.
+   */
+//#define TOOL_SENSOR
 
 /**
    * Retract and prime filament on tool-change to reduce
@@ -2709,23 +2760,23 @@
    * Define your own with:
    * { <off_time[1..15]>, <hysteresis_end[-3..12]>, hysteresis_start[1..8] }
    */
-#define CHOPPER_TIMING CHOPPER_DEFAULT_24V // All axes (override below)
-//#define CHOPPER_TIMING_X  CHOPPER_DEFAULT_12V   // For X Axes (override below)
-//#define CHOPPER_TIMING_X2 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_Y  CHOPPER_DEFAULT_12V   // For Y Axes (override below)
-//#define CHOPPER_TIMING_Y2 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_Z  CHOPPER_DEFAULT_12V   // For Z Axes (override below)
-//#define CHOPPER_TIMING_Z2 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_Z3 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_Z4 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E  CHOPPER_DEFAULT_12V   // For Extruders (override below)
-//#define CHOPPER_TIMING_E1 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E2 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E3 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E4 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E5 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E6 CHOPPER_DEFAULT_12V
-//#define CHOPPER_TIMING_E7 CHOPPER_DEFAULT_12V
+#define CHOPPER_TIMING CHOPPER_DEFAULT_12V // All axes (override below)
+                                           //#define CHOPPER_TIMING_X  CHOPPER_TIMING        // For X Axes (override below)
+                                           //#define CHOPPER_TIMING_X2 CHOPPER_TIMING_X
+                                           //#define CHOPPER_TIMING_Y  CHOPPER_TIMING        // For Y Axes (override below)
+                                           //#define CHOPPER_TIMING_Y2 CHOPPER_TIMING_Y
+                                           //#define CHOPPER_TIMING_Z  CHOPPER_TIMING        // For Z Axes (override below)
+                                           //#define CHOPPER_TIMING_Z2 CHOPPER_TIMING_Z
+                                           //#define CHOPPER_TIMING_Z3 CHOPPER_TIMING_Z
+                                           //#define CHOPPER_TIMING_Z4 CHOPPER_TIMING_Z
+                                           //#define CHOPPER_TIMING_E  CHOPPER_TIMING        // For Extruders (override below)
+                                           //#define CHOPPER_TIMING_E1 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E2 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E3 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E4 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E5 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E6 CHOPPER_TIMING_E
+                                           //#define CHOPPER_TIMING_E7 CHOPPER_TIMING_E
 
 /**
    * Monitor Trinamic drivers
@@ -3364,10 +3415,10 @@
 //#define POWER_MONITOR_VOLTAGE   // Monitor the system voltage
 
 #if ENABLED(POWER_MONITOR_CURRENT)
-#define POWER_MONITOR_VOLTS_PER_AMP 0.05000  // Input voltage to the MCU analog pin per amp  - DO NOT apply more than ADC_VREF!
-#define POWER_MONITOR_CURRENT_OFFSET 0       // Offset (in amps) applied to the calculated current
-#define POWER_MONITOR_FIXED_VOLTAGE 13.6     // Voltage for a current sensor with no voltage sensor (for power display)
-    #endif
+#define POWER_MONITOR_VOLTS_PER_AMP 0.05000 // Input voltage to the MCU analog pin per amp  - DO NOT apply more than ADC_VREF!
+#define POWER_MONITOR_CURRENT_OFFSET 0      // Offset (in amps) applied to the calculated current
+#define POWER_MONITOR_FIXED_VOLTAGE 13.6    // Voltage for a current sensor with no voltage sensor (for power display)
+#endif
 
 #if ENABLED(POWER_MONITOR_VOLTAGE)
 #define POWER_MONITOR_VOLTS_PER_VOLT 0.077933 // Input voltage to the MCU analog pin per volt - DO NOT apply more than ADC_VREF!
@@ -3794,14 +3845,13 @@
 /**
  * NanoDLP Sync support
  *
- * Add support for Synchronized Z moves when using with NanoDLP. G0/G1 axis moves will output "Z_move_comp"
- * string to enable synchronization with DLP projector exposure. This change will allow to use
- * [[WaitForDoneMessage]] instead of populating your gcode with M400 commands
+ * Support for Synchronized Z moves when used with NanoDLP. G0/G1 axis moves will
+ * output a "Z_move_comp" string to enable synchronization with DLP projector exposure.
+ * This feature allows you to use [[WaitForDoneMessage]] instead of M400 commands.
  */
 //#define NANODLP_Z_SYNC
 #if ENABLED(NANODLP_Z_SYNC)
-//#define NANODLP_ALL_AXIS  // Enables "Z_move_comp" output on any axis move.
-// Default behavior is limited to Z axis only.
+//#define NANODLP_ALL_AXIS  // Send a "Z_move_comp" report for any axis move (not just Z).
 #endif
 
 /**
@@ -3961,29 +4011,29 @@
 //#define SERVICE_INTERVAL_3    1 // print hours
 #endif
 
-    // @section develop
+// @section develop
 
-    //
-    // M100 Free Memory Watcher to debug memory usage
-    //
-    //#define M100_FREE_MEMORY_WATCHER
+//
+// M100 Free Memory Watcher to debug memory usage
+//
+//#define M100_FREE_MEMORY_WATCHER
 
-    //
-    // M42 - Set pin states
-    //
-    //#define DIRECT_PIN_CONTROL
+//
+// M42 - Set pin states
+//
+//#define DIRECT_PIN_CONTROL
 
-    //
-    // M43 - display pin status, toggle pins, watch pins, watch endstops & toggle LED, test servo probe
-    //
-    //#define PINS_DEBUGGING
+//
+// M43 - display pin status, toggle pins, watch pins, watch endstops & toggle LED, test servo probe
+//
+//#define PINS_DEBUGGING
 
-    // Enable Marlin dev mode which adds some special commands
-    //#define MARLIN_DEV_MODE
+// Enable Marlin dev mode which adds some special commands
+//#define MARLIN_DEV_MODE
 
-    /**
+/**
  * Postmortem Debugging captures misbehavior and outputs the CPU status and backtrace to serial.
  * When running in the debugger it will break for debugging. This is useful to help understand
  * a crash from a remote location. Requires ~400 bytes of SRAM and 5Kb of flash.
  */
-    //#define POSTMORTEM_DEBUGGING
+//#define POSTMORTEM_DEBUGGING

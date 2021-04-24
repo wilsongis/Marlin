@@ -2755,22 +2755,22 @@
    * Define your own with:
    * { <off_time[1..15]>, <hysteresis_end[-3..12]>, hysteresis_start[1..8] }
    */
-#define CHOPPER_TIMING CHOPPER_DEFAULT_12V // All axes (override below)
-                                           //#define CHOPPER_TIMING_X  CHOPPER_TIMING        // For X Axes (override below)
-                                           //#define CHOPPER_TIMING_X2 CHOPPER_TIMING_X
-                                           //#define CHOPPER_TIMING_Y  CHOPPER_TIMING        // For Y Axes (override below)
-                                           //#define CHOPPER_TIMING_Y2 CHOPPER_TIMING_Y
-                                           //#define CHOPPER_TIMING_Z  CHOPPER_TIMING        // For Z Axes (override below)
-                                           //#define CHOPPER_TIMING_Z2 CHOPPER_TIMING_Z
-                                           //#define CHOPPER_TIMING_Z3 CHOPPER_TIMING_Z
-                                           //#define CHOPPER_TIMING_Z4 CHOPPER_TIMING_Z
-                                           //#define CHOPPER_TIMING_E  CHOPPER_TIMING        // For Extruders (override below)
-                                           //#define CHOPPER_TIMING_E1 CHOPPER_TIMING_E
-                                           //#define CHOPPER_TIMING_E2 CHOPPER_TIMING_E
-                                           //#define CHOPPER_TIMING_E3 CHOPPER_TIMING_E
-                                           //#define CHOPPER_TIMING_E4 CHOPPER_TIMING_E
-                                           //#define CHOPPER_TIMING_E5 CHOPPER_TIMING_E
-                                           //#define CHOPPER_TIMING_E6 CHOPPER_TIMING_E
+#define CHOPPER_TIMING CHOPPER_DEFAULT_12V // All axes (override below)                                                        \
+                                           //#define CHOPPER_TIMING_X  CHOPPER_TIMING        // For X Axes (override below)    \
+                                           //#define CHOPPER_TIMING_X2 CHOPPER_TIMING_X                                        \
+                                           //#define CHOPPER_TIMING_Y  CHOPPER_TIMING        // For Y Axes (override below)    \
+                                           //#define CHOPPER_TIMING_Y2 CHOPPER_TIMING_Y                                        \
+                                           //#define CHOPPER_TIMING_Z  CHOPPER_TIMING        // For Z Axes (override below)    \
+                                           //#define CHOPPER_TIMING_Z2 CHOPPER_TIMING_Z                                        \
+                                           //#define CHOPPER_TIMING_Z3 CHOPPER_TIMING_Z                                        \
+                                           //#define CHOPPER_TIMING_Z4 CHOPPER_TIMING_Z                                        \
+                                           //#define CHOPPER_TIMING_E  CHOPPER_TIMING        // For Extruders (override below) \
+                                           //#define CHOPPER_TIMING_E1 CHOPPER_TIMING_E                                        \
+                                           //#define CHOPPER_TIMING_E2 CHOPPER_TIMING_E                                        \
+                                           //#define CHOPPER_TIMING_E3 CHOPPER_TIMING_E                                        \
+                                           //#define CHOPPER_TIMING_E4 CHOPPER_TIMING_E                                        \
+                                           //#define CHOPPER_TIMING_E5 CHOPPER_TIMING_E                                        \
+                                           //#define CHOPPER_TIMING_E6 CHOPPER_TIMING_E                                        \
                                            //#define CHOPPER_TIMING_E7 CHOPPER_TIMING_E
 
 /**
@@ -3201,6 +3201,12 @@
 #define SPINDLE_LASER_PWM_INVERT false // Set to "true" if the speed/power goes up when you want it to go slower
 
 #define SPINDLE_LASER_FREQUENCY 2500 // (Hz) Spindle/laser frequency (only on supported HALs: AVR and LPC)
+
+//#define AIR_EVACUATION                     // Cutter Vacuum / Laser Blower motor control with G-codes M10-M11
+#if ENABLED(AIR_EVACUATION)
+#define AIR_EVACUATION_ACTIVE LOW // Set to "HIGH" if the on/off function is active HIGH
+#define AIR_EVACUATION_PIN 42     // Override the default Cutter Vacuum or Laser Blower pin
+#endif
 
 //#define SPINDLE_SERVO         // A servo converting an angle to spindle power
 #ifdef SPINDLE_SERVO

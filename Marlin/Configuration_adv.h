@@ -2151,9 +2151,6 @@
 //#define SERIAL_XON_XOFF
 #endif
 
-// Add M575 G-code to change the baud rate
-//#define BAUD_RATE_GCODE
-
 #if ENABLED(SDSUPPORT)
 // Enable this option to collect and display the maximum
 // RX queue usage after transferring a file to SD.
@@ -3844,7 +3841,7 @@
  */
 //#define FREEZE_FEATURE
 #if ENABLED(FREEZE_FEATURE)
-  //#define FREEZE_PIN 41   // Override the default (KILL) pin here
+//#define FREEZE_PIN 41   // Override the default (KILL) pin here
 #endif
 
 /**

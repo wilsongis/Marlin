@@ -30,7 +30,7 @@
  *
  * Basic settings can be found in Configuration.h
  */
-#define CONFIGURATION_ADV_H_VERSION 02000801
+#define CONFIGURATION_ADV_H_VERSION 02000900
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -590,9 +590,9 @@
 #endif
 #if EITHER(CASE_LIGHT_USE_NEOPIXEL, CASE_LIGHT_USE_RGB_LED)
 #define CASE_LIGHT_DEFAULT_COLOR \
-   {                             \
-      255, 255, 255, 255         \
-   } // { Red, Green, Blue, White }
+  {                              \
+    255, 255, 255, 255           \
+  } // { Red, Green, Blue, White }
 #endif
 #endif
 
@@ -737,16 +737,16 @@
  * the position of the toolhead relative to the workspace.
  */
 
-//#define SENSORLESS_BACKOFF_MM  { 2, 2 }     // (mm) Backoff from endstops before sensorless homing
+//#define SENSORLESS_BACKOFF_MM  { 2, 2, 0 }  // (mm) Backoff from endstops before sensorless homing
 
 #define HOMING_BUMP_MM \
-   {                   \
-      5, 5, 2          \
-   } // (mm) Backoff from endstops after first bump
+  {                    \
+    5, 5, 2            \
+  } // (mm) Backoff from endstops after first bump
 #define HOMING_BUMP_DIVISOR \
-   {                        \
-      2, 2, 4               \
-   } // Re-Bump Speed Divisor (Divides the Homing Feedrate)
+  {                         \
+    2, 2, 4                 \
+  } // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
 
@@ -867,10 +867,10 @@
 // Define Stepper XY positions for Z1, Z2, Z3 corresponding to
 // the Z screw positions in the bed carriage.
 // Define one position per Z stepper in stepper driver order.
-#define Z_STEPPER_ALIGN_STEPPER_XY                    \
-   {                                                  \
-      {210.7, 102.5}, {152.6, 220.0}, { 94.5, 102.5 } \
-   }
+#define Z_STEPPER_ALIGN_STEPPER_XY                  \
+  {                                                 \
+    {210.7, 102.5}, {152.6, 220.0}, { 94.5, 102.5 } \
+  }
 #else
 // Amplification factor. Used to scale the correction step up or down in case
 // the stepper (spindle) position is farther out than the test point.
@@ -894,10 +894,10 @@
 #if ENABLED(ASSISTED_TRAMMING)
 
 // Define positions for probe points.
-#define TRAMMING_POINT_XY                          \
-   {                                               \
-      {20, 20}, {180, 20}, {180, 180}, { 20, 180 } \
-   }
+#define TRAMMING_POINT_XY                        \
+  {                                              \
+    {20, 20}, {180, 20}, {180, 180}, { 20, 180 } \
+  }
 
 // Define position names for probe points.
 #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -924,10 +924,10 @@
 
 // @section motion
 
-#define AXIS_RELATIVE_MODES      \
-   {                             \
-      false, false, false, false \
-   }
+#define AXIS_RELATIVE_MODES    \
+  {                            \
+    false, false, false, false \
+  }
 
 // Add a Duplicate option for well-separated conjoined nozzles
 //#define MULTI_NOZZLE_DUPLICATION
@@ -936,6 +936,9 @@
 #define INVERT_X_STEP_PIN false
 #define INVERT_Y_STEP_PIN false
 #define INVERT_Z_STEP_PIN false
+#define INVERT_I_STEP_PIN false
+#define INVERT_J_STEP_PIN false
+#define INVERT_K_STEP_PIN false
 #define INVERT_E_STEP_PIN false
 
 /**
@@ -947,6 +950,9 @@
 #define DISABLE_INACTIVE_X true
 #define DISABLE_INACTIVE_Y true
 #define DISABLE_INACTIVE_Z true // Set 'false' if the nozzle could fall onto your printed part!
+#define DISABLE_INACTIVE_I true
+#define DISABLE_INACTIVE_J true
+#define DISABLE_INACTIVE_K true
 #define DISABLE_INACTIVE_E true
 
 // Default Minimum Feedrates for printing and travel moves
@@ -988,9 +994,9 @@
 // Define values for backlash distance and correction.
 // If BACKLASH_GCODE is enabled these values are the defaults.
 #define BACKLASH_DISTANCE_MM \
-   {                         \
-      0, 0, 0                \
-   }                            // (mm)
+  {                          \
+    0, 0, 0                  \
+  }                             // (mm) One value for each linear axis
 #define BACKLASH_CORRECTION 0.0 // 0.0 = no correction; 1.0 = full correction
 
 // Add steps for motor direction changes on CORE kinematics
@@ -1052,13 +1058,13 @@
 
 // The true location and dimension the cube/bolt/washer on the bed.
 #define CALIBRATION_OBJECT_CENTER \
-   {                              \
-      264.0, -22.0, -2.0          \
-   } // mm
+  {                               \
+    264.0, -22.0, -2.0            \
+  } // mm
 #define CALIBRATION_OBJECT_DIMENSIONS \
-   {                                  \
-      10.0, 10.0, 10.0                \
-   } // mm
+  {                                   \
+    10.0, 10.0, 10.0                  \
+  } // mm
 
 // Comment out any sides which are unreachable by the probe. For best
 // auto-calibration results, all sides must be reachable.
@@ -1066,6 +1072,13 @@
 #define CALIBRATION_MEASURE_FRONT
 #define CALIBRATION_MEASURE_LEFT
 #define CALIBRATION_MEASURE_BACK
+
+//#define CALIBRATION_MEASURE_IMIN
+//#define CALIBRATION_MEASURE_IMAX
+//#define CALIBRATION_MEASURE_JMIN
+//#define CALIBRATION_MEASURE_JMAX
+//#define CALIBRATION_MEASURE_KMIN
+//#define CALIBRATION_MEASURE_KMAX
 
 // Probing at the exact top center only works if the center is flat. If
 // probing on a screwhead or hollow washer, probe near the edges.
@@ -1100,10 +1113,10 @@
 //#define MICROSTEP32 HIGH,LOW,HIGH
 
 // Microstep settings (Requires a board with pins named X_MS1, X_MS2, etc.)
-#define MICROSTEP_MODES      \
-   {                         \
-      16, 16, 16, 16, 16, 16 \
-   } // [1,2,4,8,16]
+#define MICROSTEP_MODES    \
+  {                        \
+    16, 16, 16, 16, 16, 16 \
+  } // [1,2,4,8,16]
 
 /**
  *  @section  stepper motor current
@@ -1139,10 +1152,10 @@
 
 // Actual motor currents in Amps. The number of entries must match DIGIPOT_I2C_NUM_CHANNELS.
 // These correspond to the physical drivers, so be mindful if the order is changed.
-#define DIGIPOT_I2C_MOTOR_CURRENTS           \
-   {                                         \
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 \
-   } // AZTEEG_X3_PRO
+#define DIGIPOT_I2C_MOTOR_CURRENTS         \
+  {                                        \
+    1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 \
+  } // AZTEEG_X3_PRO
 
 //#define DIGIPOT_USE_RAW_VALUES    // Use DIGIPOT_MOTOR_CURRENT raw wiper values (instead of A4988 motor currents)
 
@@ -1167,10 +1180,10 @@
 // @section lcd
 
 #if EITHER(IS_ULTIPANEL, EXTENSIBLE_UI)
-#define MANUAL_FEEDRATE                \
-   {                                   \
-      50 * 60, 50 * 60, 4 * 60, 2 * 60 \
-   }                           // (mm/min) Feedrates for manual moves along X, Y, Z, E from panel
+#define MANUAL_FEEDRATE              \
+  {                                  \
+    50 * 60, 50 * 60, 4 * 60, 2 * 60 \
+  }                            // (mm/min) Feedrates for manual moves along X, Y, Z, E from panel
 #define FINE_MANUAL_MOVE 0.025 // (mm) Smallest manual move (< 0.1mm) applying to Z on most machines
 #if IS_ULTIPANEL
 #define MANUAL_E_MOVES_RELATIVE // Display extruder move distance rather than "position"
@@ -1967,15 +1980,15 @@
 #if ENABLED(PROBE_TEMP_COMPENSATION)
 // Park position to wait for probe cooldown
 #define PTC_PARK_POS \
-   {                 \
-      0, 0, 100      \
-   }
+  {                  \
+    0, 0, 100        \
+  }
 
 // Probe position to probe and wait for probe to reach target temperature
 #define PTC_PROBE_POS \
-   {                  \
-      90, 100         \
-   }
+  {                   \
+    90, 100           \
+  }
 
 // Enable additional compensation using hotend temperature
 // Note: this values cannot be calibrated automatically but have to be set manually
@@ -2277,6 +2290,13 @@
 #endif
 
 /**
+   * Extra G-code to run while executing tool-change commands. Can be used to use an additional
+   * stepper motor (I axis, see option LINEAR_AXES in Configuration.h) to drive the tool-changer.
+   */
+//#define EVENT_GCODE_TOOLCHANGE_T0 "G28 A\nG1 A0" // Extra G-code to run while executing tool-change command T0
+//#define EVENT_GCODE_TOOLCHANGE_T1 "G1 A10"       // Extra G-code to run while executing tool-change command T1
+
+/**
    * Tool Sensors detect when tools have been picked up or dropped.
    * Requires the pins TOOL_SENSOR1_PIN, TOOL_SENSOR2_PIN, etc.
    */
@@ -2332,10 +2352,10 @@
    */
 //#define TOOLCHANGE_PARK
 #if ENABLED(TOOLCHANGE_PARK)
-#define TOOLCHANGE_PARK_XY           \
-   {                                 \
-      X_MIN_POS + 10, Y_MIN_POS + 10 \
-   }
+#define TOOLCHANGE_PARK_XY         \
+  {                                \
+    X_MIN_POS + 10, Y_MIN_POS + 10 \
+  }
 #define TOOLCHANGE_PARK_XY_FEEDRATE 6000 // (mm/min)
 //#define TOOLCHANGE_PARK_X_ONLY          // X axis only move
 //#define TOOLCHANGE_PARK_Y_ONLY          // Y axis only move
@@ -2456,6 +2476,24 @@
 #define Z4_MICROSTEPS Z_MICROSTEPS
 #endif
 
+#if AXIS_DRIVER_TYPE_I(TMC26X)
+#define I_MAX_CURRENT 1000
+#define I_SENSE_RESISTOR 91
+#define I_MICROSTEPS 16
+#endif
+
+#if AXIS_DRIVER_TYPE_J(TMC26X)
+#define J_MAX_CURRENT 1000
+#define J_SENSE_RESISTOR 91
+#define J_MICROSTEPS 16
+#endif
+
+#if AXIS_DRIVER_TYPE_K(TMC26X)
+#define K_MAX_CURRENT 1000
+#define K_SENSE_RESISTOR 91
+#define K_MICROSTEPS 16
+#endif
+
 #if AXIS_DRIVER_TYPE_E0(TMC26X)
 #define E0_MAX_CURRENT 1000
 #define E0_SENSE_RESISTOR 91
@@ -2535,7 +2573,7 @@
 #define INTERPOLATE true
 
 #if AXIS_IS_TMC(X)
-#define X_CURRENT 650            // (mA) RMS current. Multiply by 1.414 for peak current.
+#define X_CURRENT 800            // (mA) RMS current. Multiply by 1.414 for peak current.
 #define X_CURRENT_HOME X_CURRENT // (mA) RMS current for sensorless homing
 #define X_MICROSTEPS 16          // 0..256
 #define X_RSENSE 0.11
@@ -2553,7 +2591,7 @@
 #endif
 
 #if AXIS_IS_TMC(Y)
-#define Y_CURRENT 650
+#define Y_CURRENT 800
 #define Y_CURRENT_HOME Y_CURRENT
 #define Y_MICROSTEPS 16
 #define Y_RSENSE 0.11
@@ -2604,6 +2642,33 @@
 #define Z4_RSENSE 0.11
 #define Z4_CHAIN_POS -1
 //#define Z4_INTERPOLATE true
+#endif
+
+#if AXIS_IS_TMC(I)
+#define I_CURRENT 800
+#define I_CURRENT_HOME I_CURRENT
+#define I_MICROSTEPS 16
+#define I_RSENSE 0.11
+#define I_CHAIN_POS -1
+//#define I_INTERPOLATE  true
+#endif
+
+#if AXIS_IS_TMC(J)
+#define J_CURRENT 800
+#define J_CURRENT_HOME J_CURRENT
+#define J_MICROSTEPS 16
+#define J_RSENSE 0.11
+#define J_CHAIN_POS -1
+//#define J_INTERPOLATE  true
+#endif
+
+#if AXIS_IS_TMC(K)
+#define K_CURRENT 800
+#define K_CURRENT_HOME K_CURRENT
+#define K_MICROSTEPS 16
+#define K_RSENSE 0.11
+#define K_CHAIN_POS -1
+//#define K_INTERPOLATE  true
 #endif
 
 #if AXIS_IS_TMC(E0)
@@ -2681,6 +2746,10 @@
 //#define Y2_CS_PIN         -1
 //#define Z2_CS_PIN         -1
 //#define Z3_CS_PIN         -1
+//#define Z4_CS_PIN         -1
+//#define I_CS_PIN          -1
+//#define J_CS_PIN          -1
+//#define K_CS_PIN          -1
 //#define E0_CS_PIN         -1
 //#define E1_CS_PIN         -1
 //#define E2_CS_PIN         -1
@@ -2720,6 +2789,9 @@
 //#define Z2_SLAVE_ADDRESS 0
 //#define Z3_SLAVE_ADDRESS 0
 //#define Z4_SLAVE_ADDRESS 0
+//#define  I_SLAVE_ADDRESS 0
+//#define  J_SLAVE_ADDRESS 0
+//#define  K_SLAVE_ADDRESS 0
 //#define E0_SLAVE_ADDRESS 0
 //#define E1_SLAVE_ADDRESS 0
 //#define E2_SLAVE_ADDRESS 0
@@ -2744,6 +2816,9 @@
    */
 #define STEALTHCHOP_XY
 #define STEALTHCHOP_Z
+#define STEALTHCHOP_I
+#define STEALTHCHOP_J
+#define STEALTHCHOP_K
 #define STEALTHCHOP_E
 
 /**
@@ -2815,6 +2890,9 @@
 #define Z2_HYBRID_THRESHOLD 3
 #define Z3_HYBRID_THRESHOLD 3
 #define Z4_HYBRID_THRESHOLD 3
+#define I_HYBRID_THRESHOLD 3
+#define J_HYBRID_THRESHOLD 3
+#define K_HYBRID_THRESHOLD 3
 #define E0_HYBRID_THRESHOLD 30
 #define E1_HYBRID_THRESHOLD 30
 #define E2_HYBRID_THRESHOLD 30
@@ -2861,6 +2939,9 @@
 //#define Z2_STALL_SENSITIVITY Z_STALL_SENSITIVITY
 //#define Z3_STALL_SENSITIVITY Z_STALL_SENSITIVITY
 //#define Z4_STALL_SENSITIVITY Z_STALL_SENSITIVITY
+//#define I_STALL_SENSITIVITY  8
+//#define J_STALL_SENSITIVITY  8
+//#define K_STALL_SENSITIVITY  8
 //#define SPI_ENDSTOPS              // TMC2130 only
 //#define IMPROVE_HOMING_RELIABILITY
 #endif
@@ -2901,8 +2982,8 @@
    * }
    */
 #define TMC_ADV() \
-   {              \
-   }
+  {               \
+  }
 
 #endif // HAS_TRINAMIC_CONFIG
 
@@ -3001,6 +3082,33 @@
 #define Z4_MAX_VOLTAGE 127
 #define Z4_CHAIN_POS -1
 #define Z4_SLEW_RATE 1
+#endif
+
+#if AXIS_DRIVER_TYPE_I(L6470)
+#define I_MICROSTEPS 128
+#define I_OVERCURRENT 2000
+#define I_STALLCURRENT 1500
+#define I_MAX_VOLTAGE 127
+#define I_CHAIN_POS -1
+#define I_SLEW_RATE 1
+#endif
+
+#if AXIS_DRIVER_TYPE_J(L6470)
+#define J_MICROSTEPS 128
+#define J_OVERCURRENT 2000
+#define J_STALLCURRENT 1500
+#define J_MAX_VOLTAGE 127
+#define J_CHAIN_POS -1
+#define J_SLEW_RATE 1
+#endif
+
+#if AXIS_DRIVER_TYPE_K(L6470)
+#define K_MICROSTEPS 128
+#define K_OVERCURRENT 2000
+#define K_STALLCURRENT 1500
+#define K_MAX_VOLTAGE 127
+#define K_CHAIN_POS -1
+#define K_SLEW_RATE 1
 #endif
 
 #if AXIS_IS_L64XX(E0)
@@ -3805,18 +3913,18 @@
 //#define INVERT_JOY_Z  // Enable if Z direction is reversed
 
 // Use M119 with JOYSTICK_DEBUG to find reasonable values after connecting:
-#define JOY_X_LIMITS                      \
-   {                                      \
-      5600, 8190 - 100, 8190 + 100, 10800 \
-   } // min, deadzone start, deadzone end, max
-#define JOY_Y_LIMITS                      \
-   {                                      \
-      5600, 8250 - 100, 8250 + 100, 11000 \
-   }
-#define JOY_Z_LIMITS                      \
-   {                                      \
-      4800, 8080 - 100, 8080 + 100, 11550 \
-   }
+#define JOY_X_LIMITS                    \
+  {                                     \
+    5600, 8190 - 100, 8190 + 100, 10800 \
+  } // min, deadzone start, deadzone end, max
+#define JOY_Y_LIMITS                    \
+  {                                     \
+    5600, 8250 - 100, 8250 + 100, 11000 \
+  }
+#define JOY_Z_LIMITS                    \
+  {                                     \
+    4800, 8080 - 100, 8080 + 100, 11550 \
+  }
 //#define JOYSTICK_DEBUG
 #endif
 
@@ -3898,10 +4006,10 @@
  * Ethernet. Use M552 to enable and set the IP address.
  */
 #if HAS_ETHERNET
-#define MAC_ADDRESS                      \
-   {                                     \
-      0xDE, 0xAD, 0xBE, 0xEF, 0xF0, 0x0D \
-   } // A MAC address unique to your network
+#define MAC_ADDRESS                    \
+  {                                    \
+    0xDE, 0xAD, 0xBE, 0xEF, 0xF0, 0x0D \
+  } // A MAC address unique to your network
 #endif
 
 /**
@@ -3964,28 +4072,28 @@
 // This is for Průša MK3-style extruders. Customize for your hardware.
 #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
 #define MMU2_LOAD_TO_NOZZLE_SEQUENCE \
-   {7.2, 1145},                      \
-       {14.4, 871},                  \
-       {36.0, 1393},                 \
-       {14.4, 871},                  \
-   {                                 \
-      50.0, 198                      \
-   }
+  {7.2, 1145},                       \
+      {14.4, 871},                   \
+      {36.0, 1393},                  \
+      {14.4, 871},                   \
+  {                                  \
+    50.0, 198                        \
+  }
 
 #define MMU2_RAMMING_SEQUENCE \
-   {1.0, 1000},               \
-       {1.0, 1500},           \
-       {2.0, 2000},           \
-       {1.5, 3000},           \
-       {2.5, 4000},           \
-       {-15.0, 5000},         \
-       {-14.0, 1200},         \
-       {-6.0, 600},           \
-       {10.0, 700},           \
-       {-10.0, 400},          \
-   {                          \
-      -50.0, 2000             \
-   }
+  {1.0, 1000},                \
+      {1.0, 1500},            \
+      {2.0, 2000},            \
+      {1.5, 3000},            \
+      {2.5, 4000},            \
+      {-15.0, 5000},          \
+      {-14.0, 1200},          \
+      {-6.0, 600},            \
+      {10.0, 700},            \
+      {-10.0, 400},           \
+  {                           \
+    -50.0, 2000               \
+  }
 #endif
 
 /**
@@ -3997,21 +4105,21 @@
 #define MMU2_C0_RETRY 5 // Number of retries (total time = timeout*retries)
 
 #define MMU2_CAN_LOAD_FEEDRATE 800 // (mm/min)
-#define MMU2_CAN_LOAD_SEQUENCE         \
-   {0.1, MMU2_CAN_LOAD_FEEDRATE},      \
-       {60.0, MMU2_CAN_LOAD_FEEDRATE}, \
-   {                                   \
-      -52.0, MMU2_CAN_LOAD_FEEDRATE    \
-   }
+#define MMU2_CAN_LOAD_SEQUENCE        \
+  {0.1, MMU2_CAN_LOAD_FEEDRATE},      \
+      {60.0, MMU2_CAN_LOAD_FEEDRATE}, \
+  {                                   \
+    -52.0, MMU2_CAN_LOAD_FEEDRATE     \
+  }
 
 #define MMU2_CAN_LOAD_RETRACT 6.0   // (mm) Keep under the distance between Load Sequence values
 #define MMU2_CAN_LOAD_DEVIATION 0.8 // (mm) Acceptable deviation
 
 #define MMU2_CAN_LOAD_INCREMENT 0.2 // (mm) To reuse within MMU2 module
-#define MMU2_CAN_LOAD_INCREMENT_SEQUENCE               \
-   {                                                   \
-      -MMU2_CAN_LOAD_INCREMENT, MMU2_CAN_LOAD_FEEDRATE \
-   }
+#define MMU2_CAN_LOAD_INCREMENT_SEQUENCE             \
+  {                                                  \
+    -MMU2_CAN_LOAD_INCREMENT, MMU2_CAN_LOAD_FEEDRATE \
+  }
 
 #else
 

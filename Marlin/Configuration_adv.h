@@ -125,6 +125,12 @@
 #define PROBE_BETA 3950                  // Beta value
 #endif
 
+#if TEMP_SENSOR_REDUNDANT == 1000
+  #define REDUNDANT_PULLUP_RESISTOR_OHMS   4700    // Pullup resistor
+  #define REDUNDANT_RESISTANCE_25C_OHMS    100000  // Resistance at 25C
+  #define REDUNDANT_BETA                   3950    // Beta value
+#endif
+
 //
 // Hephestos 2 24V heated bed upgrade kit.
 // https://store.bq.com/en/heated-bed-kit-hephestos2
@@ -192,19 +198,19 @@
 // Laser Cooler options
 //
 #if TEMP_SENSOR_COOLER
-#define COOLER_MINTEMP 8         // (°C)
-#define COOLER_MAXTEMP 26        // (°C)
-#define COOLER_DEFAULT_TEMP 16   // (°C)
-#define TEMP_COOLER_HYSTERESIS 1 // (°C) Temperature proximity considered "close enough" to the target
-#define COOLER_PIN 8             // Laser cooler on/off pin used to control power to the cooling element e.g. TEC, External chiller via relay
-#define COOLER_INVERTING false
-#define TEMP_COOLER_PIN 15 // Laser/Cooler temperature sensor pin. ADC is required.
-#define COOLER_FAN         // Enable a fan on the cooler, Fan# 0,1,2,3 etc.
-#define COOLER_FAN_INDEX 0 // FAN number 0, 1, 2 etc. e.g.
-#if ENABLED(COOLER_FAN)
-#define COOLER_FAN_BASE 100  // Base Cooler fan PWM (0-255); turns on when Cooler temperature is above the target
-#define COOLER_FAN_FACTOR 25 // PWM increase per °C above target
-#endif
+  #define COOLER_MINTEMP           8  // (°C)
+  #define COOLER_MAXTEMP          26  // (°C)
+  #define COOLER_DEFAULT_TEMP     16  // (°C)
+  #define TEMP_COOLER_HYSTERESIS   1  // (°C) Temperature proximity considered "close enough" to the target
+  #define COOLER_PIN               8  // Laser cooler on/off pin used to control power to the cooling element (e.g., TEC, External chiller via relay)
+  #define COOLER_INVERTING     false
+  #define TEMP_COOLER_PIN         15  // Laser/Cooler temperature sensor pin. ADC is required.
+  #define COOLER_FAN                  // Enable a fan on the cooler, Fan# 0,1,2,3 etc.
+  #define COOLER_FAN_INDEX         0  // FAN number 0, 1, 2 etc. e.g.
+  #if ENABLED(COOLER_FAN)
+    #define COOLER_FAN_BASE      100  // Base Cooler fan PWM (0-255); turns on when Cooler temperature is above the target
+    #define COOLER_FAN_FACTOR     25  // PWM increase per °C above target
+  #endif
 #endif
 
 //
@@ -526,6 +532,11 @@
 //#define USE_OCR2A_AS_TOP
 #endif
 
+/**
+ * Use one of the PWM fans as a redundant part-cooling fan
+ */
+//#define REDUNDANT_PART_COOLING_FAN 2  // Index of the fan to sync with FAN 0.
+
 // @section extruder
 
 /**
@@ -672,6 +683,12 @@
 #define Z4_ENDSTOP_ADJUSTMENT 0
 #endif
 #endif
+#endif
+
+// Drive the E axis with two synchronized steppers
+//#define E_DUAL_STEPPER_DRIVERS
+#if ENABLED(E_DUAL_STEPPER_DRIVERS)
+  //#define INVERT_E1_VS_E0_DIR   // Enable if the E motors need opposite DIR states
 #endif
 
 /**
@@ -1972,59 +1989,53 @@
  * For a more detailed explanation of the process see G76_M871.cpp.
  */
 #if HAS_BED_PROBE && TEMP_SENSOR_PROBE && TEMP_SENSOR_BED
-// Enable thermal first layer compensation using bed and probe temperatures
-#define PROBE_TEMP_COMPENSATION
+  // Enable thermal first layer compensation using bed and probe temperatures
+  #define PROBE_TEMP_COMPENSATION
 
-// Add additional compensation depending on hotend temperature
-// Note: this values cannot be calibrated and have to be set manually
-#if ENABLED(PROBE_TEMP_COMPENSATION)
-// Park position to wait for probe cooldown
-#define PTC_PARK_POS \
-  {                  \
-    0, 0, 100        \
-  }
+  // Add additional compensation depending on hotend temperature
+  // Note: this values cannot be calibrated and have to be set manually
+  #if ENABLED(PROBE_TEMP_COMPENSATION)
+    // Park position to wait for probe cooldown
+    #define PTC_PARK_POS   { 0, 0, 100 }
 
-// Probe position to probe and wait for probe to reach target temperature
-#define PTC_PROBE_POS \
-  {                   \
-    90, 100           \
-  }
+    // Probe position to probe and wait for probe to reach target temperature
+    #define PTC_PROBE_POS  { 90, 100 }
 
-// Enable additional compensation using hotend temperature
-// Note: this values cannot be calibrated automatically but have to be set manually
-//#define USE_TEMP_EXT_COMPENSATION
+    // Enable additional compensation using hotend temperature
+    // Note: this values cannot be calibrated automatically but have to be set manually
+    //#define USE_TEMP_EXT_COMPENSATION
 
-// Probe temperature calibration generates a table of values starting at PTC_SAMPLE_START
-// (e.g. 30), in steps of PTC_SAMPLE_RES (e.g. 5) with PTC_SAMPLE_COUNT (e.g. 10) samples.
+    // Probe temperature calibration generates a table of values starting at PTC_SAMPLE_START
+    // (e.g., 30), in steps of PTC_SAMPLE_RES (e.g., 5) with PTC_SAMPLE_COUNT (e.g., 10) samples.
 
-//#define PTC_SAMPLE_START  30.0f
-//#define PTC_SAMPLE_RES    5.0f
-//#define PTC_SAMPLE_COUNT  10U
+    //#define PTC_SAMPLE_START  30  // (°C)
+    //#define PTC_SAMPLE_RES     5  // (°C)
+    //#define PTC_SAMPLE_COUNT  10
 
-// Bed temperature calibration builds a similar table.
+    // Bed temperature calibration builds a similar table.
 
-//#define BTC_SAMPLE_START  60.0f
-//#define BTC_SAMPLE_RES    5.0f
-//#define BTC_SAMPLE_COUNT  10U
+    //#define BTC_SAMPLE_START  60  // (°C)
+    //#define BTC_SAMPLE_RES     5  // (°C)
+    //#define BTC_SAMPLE_COUNT  10
 
-// The temperature the probe should be at while taking measurements during bed temperature
-// calibration.
-//#define BTC_PROBE_TEMP 30.0f
+    // The temperature the probe should be at while taking measurements during bed temperature
+    // calibration.
+    //#define BTC_PROBE_TEMP    30  // (°C)
 
-// Height above Z=0.0f to raise the nozzle. Lowering this can help the probe to heat faster.
-// Note: the Z=0.0f offset is determined by the probe offset which can be set using M851.
-//#define PTC_PROBE_HEATING_OFFSET 0.5f
+    // Height above Z=0.0f to raise the nozzle. Lowering this can help the probe to heat faster.
+    // Note: the Z=0.0f offset is determined by the probe offset which can be set using M851.
+    //#define PTC_PROBE_HEATING_OFFSET 0.5f
 
-// Height to raise the Z-probe between heating and taking the next measurement. Some probes
-// may fail to untrigger if they have been triggered for a long time, which can be solved by
-// increasing the height the probe is raised to.
-//#define PTC_PROBE_RAISE 15U
+    // Height to raise the Z-probe between heating and taking the next measurement. Some probes
+    // may fail to untrigger if they have been triggered for a long time, which can be solved by
+    // increasing the height the probe is raised to.
+    //#define PTC_PROBE_RAISE 15
 
-// If the probe is outside of the defined range, use linear extrapolation using the closest
-// point and the PTC_LINEAR_EXTRAPOLATION'th next point. E.g. if set to 4 it will use data[0]
-// and data[4] to perform linear extrapolation for values below PTC_SAMPLE_START.
-//#define PTC_LINEAR_EXTRAPOLATION 4
-#endif
+    // If the probe is outside of the defined range, use linear extrapolation using the closest
+    // point and the PTC_LINEAR_EXTRAPOLATION'th next point. E.g. if set to 4 it will use data[0]
+    // and data[4] to perform linear extrapolation for values below PTC_SAMPLE_START.
+    //#define PTC_LINEAR_EXTRAPOLATION 4
+  #endif
 #endif
 
 // @section extras
@@ -2133,7 +2144,7 @@
 // @section motion
 
 // The number of linear moves that can be in the planner at once.
-// The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g. 8, 16, 32)
+// The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g., 8, 16, 32)
 #if BOTH(SDSUPPORT, DIRECT_STEPPING)
 #define BLOCK_BUFFER_SIZE 64
 #elif ENABLED(SDSUPPORT)
@@ -3459,9 +3470,19 @@
 #define SPINDLE_LASER_POWERUP_DELAY 50   // (ms) Delay to allow the spindle/laser to come up to speed/power
 #define SPINDLE_LASER_POWERDOWN_DELAY 50 // (ms) Delay to allow the spindle to stop
 
-#endif
-#endif
-#endif
+    #endif
+
+    //
+    // Laser I2C Ammeter (High precision INA226 low/high side module)
+    //
+    //#define I2C_AMMETER
+    #if ENABLED(I2C_AMMETER)
+      #define I2C_AMMETER_IMAX            0.1    // (Amps) Calibration value for the expected current range
+      #define I2C_AMMETER_SHUNT_RESISTOR  0.1    // (Ohms) Calibration shunt resistor value
+    #endif
+
+  #endif
+#endif // SPINDLE_FEATURE || LASER_FEATURE
 
 /**
  * Synchronous Laser Control with M106/M107

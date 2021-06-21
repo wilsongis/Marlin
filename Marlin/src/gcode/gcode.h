@@ -315,7 +315,7 @@
 #endif
 
 enum AxisRelative : uint8_t {
-  LOGICAL_AXIS_LIST(REL_E, REL_X, REL_Y, REL_Z)
+  LOGICAL_AXIS_LIST(REL_E, REL_X, REL_Y, REL_Z, REL_I, REL_J, REL_K)
   #if HAS_EXTRUDERS
     , E_MODE_ABS, E_MODE_REL
   #endif
@@ -338,7 +338,11 @@ public:
     return TEST(axis_relative, a);
   }
   static inline void set_relative_mode(const bool rel) {
-    axis_relative = rel ? (0 LOGICAL_AXIS_GANG(| _BV(REL_E), | _BV(REL_X), | _BV(REL_Y), | _BV(REL_Z))) : 0;
+    axis_relative = rel ? (0 LOGICAL_AXIS_GANG(
+      | _BV(REL_E),
+      | _BV(REL_X), | _BV(REL_Y), | _BV(REL_Z),
+      | _BV(REL_I), | _BV(REL_J), | _BV(REL_K)
+    )) : 0;
   }
   #if HAS_EXTRUDERS
     static inline void set_e_relative() {
@@ -388,7 +392,7 @@ public:
   static void process_subcommands_now(char * gcode);
 
   static inline void home_all_axes(const bool keep_leveling=false) {
-    process_subcommands_now_P(keep_leveling ? G28_STR : TERN(G28_L0_ENSURES_LEVELING_OFF, PSTR("G28L0"), G28_STR));
+    process_subcommands_now_P(keep_leveling ? G28_STR : TERN(CAN_SET_LEVELING_AFTER_G28, PSTR("G28L0"), G28_STR));
   }
 
   #if EITHER(HAS_AUTO_REPORTING, HOST_KEEPALIVE_FEATURE)
@@ -560,20 +564,23 @@ private:
   #if HAS_CUTTER
     static void M3_M4(const bool is_M4);
     static void M5();
-    #if ENABLED(AIR_EVACUATION)
-      static void M10();
-      static void M11();
-    #endif
   #endif
 
-  #if ENABLED(COOLANT_CONTROL)
-    #if ENABLED(COOLANT_MIST)
-      static void M7();
-    #endif
-    #if ENABLED(COOLANT_FLOOD)
-      static void M8();
-    #endif
+  #if ENABLED(COOLANT_MIST)
+    static void M7();
+  #endif
+
+  #if EITHER(AIR_ASSIST, COOLANT_FLOOD)
+    static void M8();
+  #endif
+
+  #if EITHER(AIR_ASSIST, COOLANT_CONTROL)
     static void M9();
+  #endif
+
+  #if ENABLED(AIR_EVACUATION)
+    static void M10();
+    static void M11();
   #endif
 
   #if ENABLED(EXTERNAL_CLOSED_LOOP_CONTROLLER)

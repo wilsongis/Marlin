@@ -3592,7 +3592,7 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
  * Sanity Check for Slim LCD Menus and Probe Offset Wizard
  */
 #if BOTH(SLIM_LCD_MENUS, PROBE_OFFSET_WIZARD)
-  #error "SLIM_LCD_MENUS disables "Advanced Settings > Probe Offsets > PROBE_OFFSET_WIZARD."
+  #error "SLIM_LCD_MENUS disables \"Advanced Settings > Probe Offsets > PROBE_OFFSET_WIZARD.\""
 #endif
 
 /**

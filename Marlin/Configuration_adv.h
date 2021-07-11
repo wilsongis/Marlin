@@ -126,9 +126,9 @@
 #endif
 
 #if TEMP_SENSOR_REDUNDANT == 1000
-  #define REDUNDANT_PULLUP_RESISTOR_OHMS   4700    // Pullup resistor
-  #define REDUNDANT_RESISTANCE_25C_OHMS    100000  // Resistance at 25C
-  #define REDUNDANT_BETA                   3950    // Beta value
+#define REDUNDANT_PULLUP_RESISTOR_OHMS 4700  // Pullup resistor
+#define REDUNDANT_RESISTANCE_25C_OHMS 100000 // Resistance at 25C
+#define REDUNDANT_BETA 3950                  // Beta value
 #endif
 
 /**
@@ -209,19 +209,19 @@
 // Laser Cooler options
 //
 #if TEMP_SENSOR_COOLER
-  #define COOLER_MINTEMP           8  // (°C)
-  #define COOLER_MAXTEMP          26  // (°C)
-  #define COOLER_DEFAULT_TEMP     16  // (°C)
-  #define TEMP_COOLER_HYSTERESIS   1  // (°C) Temperature proximity considered "close enough" to the target
-  #define COOLER_PIN               8  // Laser cooler on/off pin used to control power to the cooling element (e.g., TEC, External chiller via relay)
-  #define COOLER_INVERTING     false
-  #define TEMP_COOLER_PIN         15  // Laser/Cooler temperature sensor pin. ADC is required.
-  #define COOLER_FAN                  // Enable a fan on the cooler, Fan# 0,1,2,3 etc.
-  #define COOLER_FAN_INDEX         0  // FAN number 0, 1, 2 etc. e.g.
-  #if ENABLED(COOLER_FAN)
-    #define COOLER_FAN_BASE      100  // Base Cooler fan PWM (0-255); turns on when Cooler temperature is above the target
-    #define COOLER_FAN_FACTOR     25  // PWM increase per °C above target
-  #endif
+#define COOLER_MINTEMP 8         // (°C)
+#define COOLER_MAXTEMP 26        // (°C)
+#define COOLER_DEFAULT_TEMP 16   // (°C)
+#define TEMP_COOLER_HYSTERESIS 1 // (°C) Temperature proximity considered "close enough" to the target
+#define COOLER_PIN 8             // Laser cooler on/off pin used to control power to the cooling element (e.g., TEC, External chiller via relay)
+#define COOLER_INVERTING false
+#define TEMP_COOLER_PIN 15 // Laser/Cooler temperature sensor pin. ADC is required.
+#define COOLER_FAN         // Enable a fan on the cooler, Fan# 0,1,2,3 etc.
+#define COOLER_FAN_INDEX 0 // FAN number 0, 1, 2 etc. e.g.
+#if ENABLED(COOLER_FAN)
+#define COOLER_FAN_BASE 100  // Base Cooler fan PWM (0-255); turns on when Cooler temperature is above the target
+#define COOLER_FAN_FACTOR 25 // PWM increase per °C above target
+#endif
 #endif
 
 //
@@ -699,7 +699,7 @@
 // Drive the E axis with two synchronized steppers
 //#define E_DUAL_STEPPER_DRIVERS
 #if ENABLED(E_DUAL_STEPPER_DRIVERS)
-  //#define INVERT_E1_VS_E0_DIR   // Enable if the E motors need opposite DIR states
+//#define INVERT_E1_VS_E0_DIR   // Enable if the E motors need opposite DIR states
 #endif
 
 /**
@@ -1364,8 +1364,8 @@
 
 #define SD_PROCEDURE_DEPTH 1 // Increase if you need more nested M32 calls
 
-#define SD_FINISHED_STEPPERRELEASE true  // Disable steppers when SD Print is finished
-#define SD_FINISHED_RELEASECOMMAND "M84" // Use "M84XYE" to keep Z enabled so your bed stays in place
+#define SD_FINISHED_STEPPERRELEASE true          // Disable steppers when SD Print is finished
+#define SD_FINISHED_RELEASECOMMAND "M84 X Y Z E" // Use "M84XYE" to keep Z enabled so your bed stays in place
 
 // Reverse SD sort to show "more recent" files first, according to the card's FAT.
 // Since the FAT gets out of order with usage, SDCARD_SORT_ALPHA is recommended.
@@ -1438,16 +1438,16 @@
    *  - SDSORT_CACHE_NAMES will retain the sorted file listing in RAM. (Expensive!)
    *  - SDSORT_DYNAMIC_RAM only uses RAM when the SD menu is visible. (Use with caution!)
    */
-//#define SDCARD_SORT_ALPHA
+#define SDCARD_SORT_ALPHA
 
 // SD Card Sorting options
 #if ENABLED(SDCARD_SORT_ALPHA)
 #define SDSORT_LIMIT 40          // Maximum number of sorted items (10-256). Costs 27 bytes each.
 #define FOLDER_SORTING -1        // -1=above  0=none  1=below
 #define SDSORT_GCODE false       // Allow turning sorting on/off with LCD and M34 G-code.
-#define SDSORT_USES_RAM false    // Pre-allocate a static array for faster pre-sorting.
+#define SDSORT_USES_RAM true     // Pre-allocate a static array for faster pre-sorting.
 #define SDSORT_USES_STACK false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
-#define SDSORT_CACHE_NAMES false // Keep sorted items in RAM longer for speedy performance. Most expensive option.
+#define SDSORT_CACHE_NAMES true  // Keep sorted items in RAM longer for speedy performance. Most expensive option.
 #define SDSORT_DYNAMIC_RAM false // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
 #define SDSORT_CACHE_VFATS 2     // Maximum number of 13-byte VFAT entries to use for sorting. \
                                  // Note: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
@@ -1483,7 +1483,7 @@
 /**
    * Auto-report SdCard status with M27 S<seconds>
    */
-//#define AUTO_REPORT_SD_STATUS
+#define AUTO_REPORT_SD_STATUS
 
 /**
    * Support for USB thumb drives using an Arduino USB Host Shield or
@@ -1637,26 +1637,26 @@
    * These options may affect code size and screen render time.
    * Custom status screens can forcibly override these settings.
    */
-  //#define STATUS_COMBINE_HEATERS    // Use combined heater images instead of separate ones
-  //#define STATUS_HOTEND_NUMBERLESS  // Use plain hotend icons instead of numbered ones (with 2+ hotends)
-  #define STATUS_HOTEND_INVERTED      // Show solid nozzle bitmaps when heating (Requires STATUS_HOTEND_ANIM for numbered hotends)
-  #define STATUS_HOTEND_ANIM          // Use a second bitmap to indicate hotend heating
-  #define STATUS_BED_ANIM             // Use a second bitmap to indicate bed heating
-  #define STATUS_CHAMBER_ANIM         // Use a second bitmap to indicate chamber heating
-  //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
-  //#define STATUS_COOLER_ANIM        // Use a second bitmap to indicate laser cooling
-  //#define STATUS_FLOWMETER_ANIM     // Use multiple bitmaps to indicate coolant flow
-  //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
-  //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
-  //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
-  //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
+//#define STATUS_COMBINE_HEATERS    // Use combined heater images instead of separate ones
+//#define STATUS_HOTEND_NUMBERLESS  // Use plain hotend icons instead of numbered ones (with 2+ hotends)
+#define STATUS_HOTEND_INVERTED // Show solid nozzle bitmaps when heating (Requires STATUS_HOTEND_ANIM for numbered hotends)
+#define STATUS_HOTEND_ANIM     // Use a second bitmap to indicate hotend heating
+#define STATUS_BED_ANIM        // Use a second bitmap to indicate bed heating
+#define STATUS_CHAMBER_ANIM    // Use a second bitmap to indicate chamber heating
+//#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
+//#define STATUS_COOLER_ANIM        // Use a second bitmap to indicate laser cooling
+//#define STATUS_FLOWMETER_ANIM     // Use multiple bitmaps to indicate coolant flow
+//#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
+//#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
+//#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
+//#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
+//#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
 
-  // Frivolous Game Options
-  //#define MARLIN_BRICKOUT
-  //#define MARLIN_INVADERS
-  //#define MARLIN_SNAKE
-  //#define GAMES_EASTER_EGG          // Add extra blank lines above the "Games" sub-menu
+// Frivolous Game Options
+//#define MARLIN_BRICKOUT
+//#define MARLIN_INVADERS
+//#define MARLIN_SNAKE
+//#define GAMES_EASTER_EGG          // Add extra blank lines above the "Games" sub-menu
 
 #endif // HAS_MARLINUI_U8GLIB
 
@@ -1888,9 +1888,9 @@
 #endif
 #endif
 
-//#define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
+#define BABYSTEP_DISPLAY_TOTAL // Display total babysteps since last G28
 
-#define BABYSTEP_ZPROBE_OFFSET // Combine M851 Z and Babystepping
+//#define BABYSTEP_ZPROBE_OFFSET // Combine M851 Z and Babystepping
 #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
 //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
 //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
@@ -2000,53 +2000,59 @@
  * For a more detailed explanation of the process see G76_M871.cpp.
  */
 #if HAS_BED_PROBE && TEMP_SENSOR_PROBE && TEMP_SENSOR_BED
-  // Enable thermal first layer compensation using bed and probe temperatures
-  #define PROBE_TEMP_COMPENSATION
+// Enable thermal first layer compensation using bed and probe temperatures
+#define PROBE_TEMP_COMPENSATION
 
-  // Add additional compensation depending on hotend temperature
-  // Note: this values cannot be calibrated and have to be set manually
-  #if ENABLED(PROBE_TEMP_COMPENSATION)
-    // Park position to wait for probe cooldown
-    #define PTC_PARK_POS   { 0, 0, 100 }
+// Add additional compensation depending on hotend temperature
+// Note: this values cannot be calibrated and have to be set manually
+#if ENABLED(PROBE_TEMP_COMPENSATION)
+// Park position to wait for probe cooldown
+#define PTC_PARK_POS \
+  {                  \
+    0, 0, 100        \
+  }
 
-    // Probe position to probe and wait for probe to reach target temperature
-    #define PTC_PROBE_POS  { 90, 100 }
+// Probe position to probe and wait for probe to reach target temperature
+#define PTC_PROBE_POS \
+  {                   \
+    90, 100           \
+  }
 
-    // Enable additional compensation using hotend temperature
-    // Note: this values cannot be calibrated automatically but have to be set manually
-    //#define USE_TEMP_EXT_COMPENSATION
+// Enable additional compensation using hotend temperature
+// Note: this values cannot be calibrated automatically but have to be set manually
+//#define USE_TEMP_EXT_COMPENSATION
 
-    // Probe temperature calibration generates a table of values starting at PTC_SAMPLE_START
-    // (e.g., 30), in steps of PTC_SAMPLE_RES (e.g., 5) with PTC_SAMPLE_COUNT (e.g., 10) samples.
+// Probe temperature calibration generates a table of values starting at PTC_SAMPLE_START
+// (e.g., 30), in steps of PTC_SAMPLE_RES (e.g., 5) with PTC_SAMPLE_COUNT (e.g., 10) samples.
 
-    //#define PTC_SAMPLE_START  30  // (°C)
-    //#define PTC_SAMPLE_RES     5  // (°C)
-    //#define PTC_SAMPLE_COUNT  10
+//#define PTC_SAMPLE_START  30  // (°C)
+//#define PTC_SAMPLE_RES     5  // (°C)
+//#define PTC_SAMPLE_COUNT  10
 
-    // Bed temperature calibration builds a similar table.
+// Bed temperature calibration builds a similar table.
 
-    //#define BTC_SAMPLE_START  60  // (°C)
-    //#define BTC_SAMPLE_RES     5  // (°C)
-    //#define BTC_SAMPLE_COUNT  10
+//#define BTC_SAMPLE_START  60  // (°C)
+//#define BTC_SAMPLE_RES     5  // (°C)
+//#define BTC_SAMPLE_COUNT  10
 
-    // The temperature the probe should be at while taking measurements during bed temperature
-    // calibration.
-    //#define BTC_PROBE_TEMP    30  // (°C)
+// The temperature the probe should be at while taking measurements during bed temperature
+// calibration.
+//#define BTC_PROBE_TEMP    30  // (°C)
 
-    // Height above Z=0.0f to raise the nozzle. Lowering this can help the probe to heat faster.
-    // Note: the Z=0.0f offset is determined by the probe offset which can be set using M851.
-    //#define PTC_PROBE_HEATING_OFFSET 0.5f
+// Height above Z=0.0f to raise the nozzle. Lowering this can help the probe to heat faster.
+// Note: the Z=0.0f offset is determined by the probe offset which can be set using M851.
+//#define PTC_PROBE_HEATING_OFFSET 0.5f
 
-    // Height to raise the Z-probe between heating and taking the next measurement. Some probes
-    // may fail to untrigger if they have been triggered for a long time, which can be solved by
-    // increasing the height the probe is raised to.
-    //#define PTC_PROBE_RAISE 15
+// Height to raise the Z-probe between heating and taking the next measurement. Some probes
+// may fail to untrigger if they have been triggered for a long time, which can be solved by
+// increasing the height the probe is raised to.
+//#define PTC_PROBE_RAISE 15
 
-    // If the probe is outside of the defined range, use linear extrapolation using the closest
-    // point and the PTC_LINEAR_EXTRAPOLATION'th next point. E.g. if set to 4 it will use data[0]
-    // and data[4] to perform linear extrapolation for values below PTC_SAMPLE_START.
-    //#define PTC_LINEAR_EXTRAPOLATION 4
-  #endif
+// If the probe is outside of the defined range, use linear extrapolation using the closest
+// point and the PTC_LINEAR_EXTRAPOLATION'th next point. E.g. if set to 4 it will use data[0]
+// and data[4] to perform linear extrapolation for values below PTC_SAMPLE_START.
+//#define PTC_LINEAR_EXTRAPOLATION 4
+#endif
 #endif
 
 // @section extras
@@ -2433,8 +2439,8 @@
 #define FILAMENT_CHANGE_ALERT_BEEPS 10 // Number of alert beeps to play when a response is needed.
 #define PAUSE_PARK_NO_STEPPER_TIMEOUT  // Enable for XYZ steppers to stay powered on during filament change.
 
-#define PARK_HEAD_ON_PAUSE // Park the nozzle during pause and filament change.
-//#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
+#define PARK_HEAD_ON_PAUSE          // Park the nozzle during pause and filament change.
+#define HOME_BEFORE_FILAMENT_CHANGE // If needed, home before parking for filament change
 
 #define FILAMENT_LOAD_UNLOAD_GCODES // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
 //#define FILAMENT_UNLOAD_ALL_EXTRUDERS         // Allow M702 to unload all extruders above a minimum target temp (as set by M302)
@@ -2595,7 +2601,7 @@
 #define INTERPOLATE true
 
 #if AXIS_IS_TMC(X)
-#define X_CURRENT 800            // (mA) RMS current. Multiply by 1.414 for peak current.
+#define X_CURRENT 650            // (mA) RMS current. Multiply by 1.414 for peak current.
 #define X_CURRENT_HOME X_CURRENT // (mA) RMS current for sensorless homing
 #define X_MICROSTEPS 16          // 0..256
 #define X_RSENSE 0.11
@@ -2613,7 +2619,7 @@
 #endif
 
 #if AXIS_IS_TMC(Y)
-#define Y_CURRENT 800
+#define Y_CURRENT 650
 #define Y_CURRENT_HOME Y_CURRENT
 #define Y_MICROSTEPS 16
 #define Y_RSENSE 0.11
@@ -2803,25 +2809,25 @@
    * Set *_SERIAL_TX_PIN and *_SERIAL_RX_PIN to match for all drivers
    * on the same serial port, either here or in your board's pins file.
    */
-//#define  X_SLAVE_ADDRESS 0
-//#define  Y_SLAVE_ADDRESS 0
-//#define  Z_SLAVE_ADDRESS 0
-//#define X2_SLAVE_ADDRESS 0
-//#define Y2_SLAVE_ADDRESS 0
-//#define Z2_SLAVE_ADDRESS 0
-//#define Z3_SLAVE_ADDRESS 0
-//#define Z4_SLAVE_ADDRESS 0
-//#define  I_SLAVE_ADDRESS 0
-//#define  J_SLAVE_ADDRESS 0
-//#define  K_SLAVE_ADDRESS 0
-//#define E0_SLAVE_ADDRESS 0
-//#define E1_SLAVE_ADDRESS 0
-//#define E2_SLAVE_ADDRESS 0
-//#define E3_SLAVE_ADDRESS 0
-//#define E4_SLAVE_ADDRESS 0
-//#define E5_SLAVE_ADDRESS 0
-//#define E6_SLAVE_ADDRESS 0
-//#define E7_SLAVE_ADDRESS 0
+#define X_SLAVE_ADDRESS 0
+#define Y_SLAVE_ADDRESS 0
+#define Z_SLAVE_ADDRESS 0
+#define X2_SLAVE_ADDRESS 0
+#define Y2_SLAVE_ADDRESS 0
+#define Z2_SLAVE_ADDRESS 0
+#define Z3_SLAVE_ADDRESS 0
+#define Z4_SLAVE_ADDRESS 0
+#define I_SLAVE_ADDRESS 0
+#define J_SLAVE_ADDRESS 0
+#define K_SLAVE_ADDRESS 0
+#define E0_SLAVE_ADDRESS 0
+#define E1_SLAVE_ADDRESS 0
+#define E2_SLAVE_ADDRESS 0
+#define E3_SLAVE_ADDRESS 0
+#define E4_SLAVE_ADDRESS 0
+#define E5_SLAVE_ADDRESS 0
+#define E6_SLAVE_ADDRESS 0
+#define E7_SLAVE_ADDRESS 0
 
 /**
    * Software enable
@@ -3481,18 +3487,18 @@
 #define SPINDLE_LASER_POWERUP_DELAY 50   // (ms) Delay to allow the spindle/laser to come up to speed/power
 #define SPINDLE_LASER_POWERDOWN_DELAY 50 // (ms) Delay to allow the spindle to stop
 
-    #endif
+#endif
 
-    //
-    // Laser I2C Ammeter (High precision INA226 low/high side module)
-    //
-    //#define I2C_AMMETER
-    #if ENABLED(I2C_AMMETER)
-      #define I2C_AMMETER_IMAX            0.1    // (Amps) Calibration value for the expected current range
-      #define I2C_AMMETER_SHUNT_RESISTOR  0.1    // (Ohms) Calibration shunt resistor value
-    #endif
+//
+// Laser I2C Ammeter (High precision INA226 low/high side module)
+//
+//#define I2C_AMMETER
+#if ENABLED(I2C_AMMETER)
+#define I2C_AMMETER_IMAX 0.1           // (Amps) Calibration value for the expected current range
+#define I2C_AMMETER_SHUNT_RESISTOR 0.1 // (Ohms) Calibration shunt resistor value
+#endif
 
-  #endif
+#endif
 #endif // SPINDLE_FEATURE || LASER_FEATURE
 
 /**
@@ -3623,7 +3629,7 @@
 /**
  * Disable all Volumetric extrusion options
  */
-#define NO_VOLUMETRICS
+//#define NO_VOLUMETRICS
 
 #if DISABLED(NO_VOLUMETRICS)
 /**
